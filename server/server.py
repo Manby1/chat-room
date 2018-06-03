@@ -8,3 +8,8 @@ port = int(input("Enter Port to connect to:"))
 
 #connect to ip and port
 server.bind((IP_address, port))
+
+#main loop -NOTE no asynchronous capabilities -only one connection will work
+while True:
+    pass
+    #honestly im dealing with the realisation that we might have to just use async here...
