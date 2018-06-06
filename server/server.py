@@ -7,7 +7,7 @@ print(server.get)
 port = int(input('Port: '))
 
 #setup using ip and port
-serversocket.bind((server.gethostname(), port))
+server.bind((socket.gethostname(), port))
 server.listen(2)
 
 while True:
