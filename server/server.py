@@ -10,7 +10,10 @@ server.bind((IP_address, port))
 server.listen(1)
 
 while True:
+    try:
     (clientsocket, address) = server.accept()
     print(clientsocket, address)
 
-server.close()
+    except Exception as e:
+        print(e)
+        client.close()
