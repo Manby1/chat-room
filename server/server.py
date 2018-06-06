@@ -2,7 +2,6 @@ import socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print(server.get)
 #IP_address = input('IP: ')
 port = int(input('Port: '))
 
@@ -12,8 +11,11 @@ server.listen(2)
 
 while True:
     try:
-        (clientsocket, address) = server.accept()
-        print(clientsocket, address)
+        (client_socket, address) = server.accept()
+        print(address)
+        while True:
+            data = client_socket.recv(512)
+            print("RECIEVED:",data)
 
     except Exception as e:
         print(e)
