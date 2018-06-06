@@ -2,7 +2,7 @@ import socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print(server.get)
+
 #IP_address = input('IP: ')
 port = int(input('Port: '))
 
