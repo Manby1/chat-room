@@ -7,4 +7,10 @@ port = int(input('Port: '))
 
 #setup using ip and port
 server.bind((IP_address, port))
-server.listen(5)
+server.listen(1)
+
+while True:
+    (clientsocket, address) = server.accept()
+    print(clientsocket, address)
+
+server.close()
