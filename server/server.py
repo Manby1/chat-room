@@ -7,3 +7,4 @@ port = 843
 
 #setup using ip and port
 server.bind((IP_address, port))
+server.listen(5)
