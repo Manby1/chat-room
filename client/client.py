@@ -14,11 +14,13 @@ port = int(input('Port: '))
 #connect to ip and port
 client.connect((IP_address, port))
 
+try:
 while True:
     i = input("Enter a message to send (or :Q) to quit:")
     if i == ':Q':
         break
     else:
         client.send(i)
-
-client.close()
+except Exception as e:
+    print(e)
+    client.close()
