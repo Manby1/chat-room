@@ -11,9 +11,9 @@ server.listen(1)
 
 while True:
     try:
-    (clientsocket, address) = server.accept()
-    print(clientsocket, address)
+        (clientsocket, address) = server.accept()
+        print(clientsocket, address)
 
     except Exception as e:
         print(e)
-        client.close()
+        server.close()
