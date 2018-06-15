@@ -16,11 +16,14 @@ client.connect((IP_address, port))
 
 while True:
     try:
-        i = input("Enter a message to send (or :Q) to quit:\n")
-        if i == ':Q':
-            quit()
-        else:
-            client.send(bytes(i, 'utf-8'))
+        i = input("Enter a message to send or just hit enter to refresh.")
+        if i != '':
+            client.send(bytes(i,'utf-8'))
+        (server_socket, address) = client.accept()
+        print(address)
+        while True:
+            data = server_socket.recv(512)
+            print("RECEIVED:",str(data)[2:-1])
 
     except Exception as e:
         print(e)
