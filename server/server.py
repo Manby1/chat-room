@@ -11,12 +11,11 @@ server.listen(5)
 
 while True:
     try:
-        print("Searching for friends...")
         (client_socket, address) = server.accept()
         print(address)
         while True:
             data = client_socket.recv(512)
-            print("RECIEVED:",str(data)[2:-1])
+            print("RECEIVED:",str(data)[2:-1])
 
     except Exception as e:
         print(e)
