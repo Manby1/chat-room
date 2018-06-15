@@ -20,7 +20,7 @@ while True:
         if i == ':Q':
             break
         else:
-            client.send(i)
+            client.send(bytes(i, 'utf-8'))
 
     except Exception as e:
         print(e)

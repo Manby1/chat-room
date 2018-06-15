@@ -15,7 +15,7 @@ while True:
         print(address)
         while True:
             data = client_socket.recv(512)
-            print("RECIEVED:",data)
+            print("RECIEVED:",str(data)[2:-1])
 
     except Exception as e:
         print(e)
