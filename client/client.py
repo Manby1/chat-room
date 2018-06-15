@@ -16,9 +16,9 @@ client.connect((IP_address, port))
 
 while True:
     try:
-        i = input("Enter a message to send (or :Q) to quit:")
+        i = input("Enter a message to send (or :Q) to quit:\n")
         if i == ':Q':
-            break
+            quit()
         else:
             client.send(bytes(i, 'utf-8'))
 
