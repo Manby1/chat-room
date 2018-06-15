@@ -7,10 +7,11 @@ port = int(input('Port: '))
 
 #setup using ip and port
 server.bind((IP_address, port))
-server.listen(2)
+server.listen(5)
 
 while True:
     try:
+        print("Searching for friends...")
         (client_socket, address) = server.accept()
         print(address)
         while True:
