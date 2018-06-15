@@ -11,9 +11,6 @@ server.listen(5)
 
 while True:
     try:
-        i = input("Enter a message to send or just hit enter to refresh.")
-        if i != '':
-            server.send(bytes(i,'utf-8'))
         (client_socket, address) = server.accept()
         print(address)
         while True:
