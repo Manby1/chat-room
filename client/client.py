@@ -2,10 +2,10 @@ import socket
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-f = open('server.txt')
-file = f.read()
-IP_address = file[0:13]
-port = int(file[14:17])
+with open('server.txt') as f:
+    data = f.read()
+IP_address = data[0:13]
+Port = int(data[14:17])
 
 '''
 IP_address = input('IP: ')
