@@ -17,6 +17,14 @@ IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
 
+async def connection(client_socket, address):
+    print('Now listening to connection:', address)
+    while True:
+        data = str(client_socket.recv(512))[2:-1]
+        if not address in addresses:
+            addresses[address] = data
+        print(addresses[address], data)
+
 async def serverLoop(address, port, connections):
     #setup using ip and port
     server.bind((address, port))
@@ -25,19 +33,11 @@ async def serverLoop(address, port, connections):
     while True:
         try:
             (client_socket, address) = server.accept()
-            print('New connection:', address)
             loop.create_task(connection(client_socket, address))
 
         except Exception as e:
             print(e)
             server.close()
-
-async def connection(client_socket, address):
-    while True:
-        data = str(client_socket.recv(512))[2:-1]
-        if not address in addresses:
-            addresses[address] = data
-        print(addresses[address], data)
 
 loop.create_task(serverLoop(IP_address, Port, 5))
 loop.run_forever()
