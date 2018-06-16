@@ -45,6 +45,7 @@ async def serverLoop(address, port, connections):
         print("Received an address!")
         task = loop.create_task(connection(client_socket, address))
         tasks.append(task)
+        await asyncio.sleep(0.1)
 
         '''except Exception as e:
             print(e)
