@@ -26,15 +26,18 @@ async def serverLoop(address, port, connections):
         try:
             (client_socket, address) = server.accept()
             print('New connection:', address)
-            while True:
-                data = str(client_socket.recv(512))[2:-1]
-                if not address in addresses:
-                    addresses[address] = data
-                print(addresses[address], data)
+            loop.create_task(connection(client_socket, address))
 
         except Exception as e:
             print(e)
             server.close()
+
+async def connection(client_socket, address)
+    while True:
+        data = str(client_socket.recv(512))[2:-1]
+        if not address in addresses:
+            addresses[address] = data
+        print(addresses[address], data)
 
 loop.create_task(serverLoop(IP_address, Port, 5))
 loop.run_forever()
