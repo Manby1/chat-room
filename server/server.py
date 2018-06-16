@@ -34,6 +34,7 @@ async def serverLoop(address, port, connections):
         try:
             (client_socket, address) = server.accept()
             loop.create_task(connection(client_socket, address))
+            print("New client connection opened.")
 
         except Exception as e:
             print(e)
