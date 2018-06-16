@@ -27,8 +27,7 @@ while True:
             data = str(client_socket.recv(512))[2:-1]
             if not address in addresses:
                 addresses[address] = data
-            else:
-                print(addresses[address], data)
+            print(addresses[address], data)
 
     except Exception as e:
         print(e)
