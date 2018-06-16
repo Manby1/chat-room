@@ -13,7 +13,7 @@ port = int(input('Port: '))
 '''
 
 #connect to ip and port
-client.connect((IP_address, port))
+client.connect((IP_address, Port))
 
 name = input('Name?\n')
 client.send(bytes(name, 'utf-8'))
