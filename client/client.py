@@ -7,7 +7,7 @@ with open('../server.txt') as f:
 IP_address = data[0:13]
 Port = int(data[14:17])
 
-commands = {'message':'m|', 'command':'c|'}
+commands = {'message':'m|', 'name':'n|'}
 def send(message, type):
     client.send(bytes(commands[type]+str(message), 'utf-8'))
 
