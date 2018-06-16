@@ -12,6 +12,9 @@ IP_address = input('IP: ')
 port = int(input('Port: '))
 '''
 
+#adress list
+addresses = {}
+
 #setup using ip and port
 server.bind((IP_address, port))
 server.listen(5)
@@ -19,10 +22,14 @@ server.listen(5)
 while True:
     try:
         (client_socket, address) = server.accept()
-        print(address)
+        if address in addresses:
+            print(addresses[address])
         while True:
-            data = client_socket.recv(512)
-            print("RECEIVED:",str(data)[2:-1])
+            data = str(client_socket.recv(512))[2:-1]
+            if data[0] == '#':
+                addresses[address]=data[1:]
+            else:
+                print("RECEIVED:",data)
 
     except Exception as e:
         print(e)

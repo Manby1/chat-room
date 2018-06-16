@@ -15,10 +15,13 @@ port = int(input('Port: '))
 #connect to ip and port
 client.connect((IP_address, port))
 
+name = input('Name?\n')
+client.send(bytes('#'+name, 'utf-8'))
+
 while True:
     try:
         i = input("Enter a message to send.\n")
-        client.send(bytes(i,'utf-8'))
+        client.send(bytes(i, 'utf-8'))
 
     except Exception as e:
         print(e)
