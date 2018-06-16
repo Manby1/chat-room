@@ -22,14 +22,13 @@ server.listen(5)
 while True:
     try:
         (client_socket, address) = server.accept()
-        if address in addresses:
-            print(addresses[address])
+        print('New connection:', address)
         while True:
             data = str(client_socket.recv(512))[2:-1]
-            if data[0] == '#':
-                addresses[address]=data[1:]
+            if not address in addresses:
+                addresses[address] = data
             else:
-                print("RECEIVED:",data)
+                print(addresses[address], data)
 
     except Exception as e:
         print(e)

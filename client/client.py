@@ -16,7 +16,7 @@ port = int(input('Port: '))
 client.connect((IP_address, port))
 
 name = input('Name?\n')
-client.send(bytes('#'+name, 'utf-8'))
+client.send(bytes(name, 'utf-8'))
 
 while True:
     try:
