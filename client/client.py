@@ -15,7 +15,7 @@ def send(message, type):
 client.connect((IP_address, Port))
 
 name = input('Name?\n')
-send(name, 'command')
+send(name, 'n')
 
 while True:
     try:
