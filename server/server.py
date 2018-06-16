@@ -32,7 +32,7 @@ async def serverLoop(address, port, connections):
             print(e)
             server.close()
 
-async def connection(client_socket, address)
+async def connection(client_socket, address):
     while True:
         data = str(client_socket.recv(512))[2:-1]
         if not address in addresses:
