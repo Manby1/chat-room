@@ -42,12 +42,13 @@ async def serverLoop(address, port, connections):
         #try:
         (client_socket, address) = server.accept()
         print("Received an address!")
-        asyncio.ensure_future(connection(client_socket, address))
-        await asyncio.sleep(0.1)
+        task = loop.create_task(connection(client_socket, address))
+        tasks.append(task)
 
         '''except Exception as e:
             print(e)
             server.close()'''
 
-loop.run_until_complete(serverLoop(IP_address, Port, 5))
+tasks = [serverLoop(IP_address, Port, 5)]
+loop.run_until_complete(asyncio.wait(tasks))
 loop.close()
