@@ -11,10 +11,10 @@ commands = {'message':'m|', 'name':'n|'}
 def send(message, type):
     client.send(bytes(commands[type]+str(message), 'utf-8'))
 
+name = input('Name?\n')
+
 #connect to ip and port
 client.connect((IP_address, Port))
-
-name = input('Name?\n')
 send(name, 'name')
 
 while True:
