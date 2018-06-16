@@ -34,7 +34,7 @@ async def connection(client_socket, address):
         elif type == 'm':
             print(addresses[address]+': '+message)
 
-async def serverLoop(address, port, connections):
+async def serverLoop(loop, address, port, connections):
     #setup using ip and port
     server.bind((address, port))
     server.listen(connections)
@@ -43,11 +43,11 @@ async def serverLoop(address, port, connections):
         if True:#try:
             (client_socket, address) = server.accept()
             print("Received an address!")
-            await connection(client_socket, address)
+            loop.create_task(connection(client_socket, address))
 
         '''except Exception as e:
             print(e)
             server.close()'''
 
-loop.run_until_complete(serverLoop(IP_address, Port, 5))
+loop.run_until_complete(serverLoop(loop, IP_address, Port, 5))
 loop.close()
