@@ -32,7 +32,6 @@ async def connection(client_socket, address):
             print(addresses[address]+' has connected!')
         elif type == 'm':
             print(addresses[address]+': '+message)
-        await asyncio.sleep(0.1)
 
 async def serverLoop(address, port, connections):
     #setup using ip and port
