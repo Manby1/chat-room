@@ -17,16 +17,12 @@ IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
 
-def recieve(client_socket):
-    data = str(client_socket.recv(512))[2:-1]
-    type = data[:1]
-    message = data[2:]
-    return type, message
-
 async def connection(client_socket, address):
     print('Now listening to connection:', address)
     while True:
-        type, message = recieve(client_socket)
+        data = str(client_socket.recv(512))[2:-1]
+        type = data[:1]
+        message = data[2:]
         if type == 'n':
             addresses[address] = message
             print(addresses[address]+' has connected!')
