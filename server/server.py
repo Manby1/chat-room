@@ -41,7 +41,8 @@ async def serverLoop(address, port, connections):
     while True:
         try:
             (client_socket, address) = server.accept()
-            await connection(client_socket, address)
+            print("Received an address!")
+            #await connection(client_socket, address)
 
         except Exception as e:
             print(e)
