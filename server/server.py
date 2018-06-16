@@ -16,7 +16,7 @@ port = int(input('Port: '))
 addresses = {}
 
 #setup using ip and port
-server.bind((IP_address, port))
+server.bind((IP_address, Port))
 server.listen(5)
 
 while True:
