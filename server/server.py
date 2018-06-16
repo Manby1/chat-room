@@ -30,8 +30,9 @@ async def connection(client_socket, address):
         type, message = recieve(client_socket)
         if type == 'n':
             addresses[address] = message
+            print(addresses[address]+' has connected!')
         elif type == 'm':
-            print(addresses[address], message)
+            print(addresses[address]+': '+message)
 
 async def serverLoop(address, port, connections):
     #setup using ip and port
