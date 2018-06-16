@@ -2,7 +2,7 @@ import socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-with open('server.txt') as f:
+with open('../server.txt') as f:
     data = f.read()
 IP_address = data[0:13]
 Port = int(data[14:17])
