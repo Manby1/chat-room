@@ -23,7 +23,6 @@ def recieve(client_socket):
     message = data[2:]
     return type, message
 
-
 async def connection(client_socket, address):
     print('Now listening to connection:', address)
     while True:
@@ -35,7 +34,7 @@ async def connection(client_socket, address):
             print(addresses[address]+': '+message)
         await asyncio.wait(0.1)
 
-async def serverLoop(address, port, connections):
+async def serverLoop(loop, address, port, connections):
     #setup using ip and port
     server.bind((address, port))
     server.listen(connections)
