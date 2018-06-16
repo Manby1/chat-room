@@ -34,7 +34,7 @@ async def connection(client_socket, address):
             print(addresses[address]+': '+message)
         await asyncio.wait(0.1)
 
-async def serverLoop(loop, address, port, connections):
+async def serverLoop(address, port, connections):
     #setup using ip and port
     server.bind((address, port))
     server.listen(connections)
