@@ -18,6 +18,7 @@ addresses = {}
 #setup using ip and port
 server.bind((IP_address, Port))
 server.listen(5)
+print('Server listening...')
 
 while True:
     try:
