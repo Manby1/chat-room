@@ -17,13 +17,21 @@ IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
 
+def recieve():
+    data = str(client_socket.recv(512))[2:-1]
+    type = data[:1]
+    message = data[2:]
+    return type, message
+
+
 async def connection(client_socket, address):
     print('Now listening to connection:', address)
     while True:
-        data = str(client_socket.recv(512))[2:-1]
-        if not address in addresses:
-            addresses[address] = data
-        print(addresses[address], data)
+        type, message = recieve()
+        if type == 'n':
+            addresses[address] = message
+        elif type == 'm':
+            print(addresses[address], message)
 
 async def serverLoop(address, port, connections):
     #setup using ip and port
