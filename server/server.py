@@ -34,12 +34,12 @@ async def serverLoop(address, port, connections):
         try:
             (client_socket, address) = server.accept()
             loop.create_task(connection(client_socket, address))
-            print("New client connection opened.")
+            asyncio.wait(0.1)
 
         except Exception as e:
             print(e)
             server.close()
 
 loop.create_task(serverLoop(IP_address, Port, 5))
-loop.run_forever()
+loop.run_until_complete()
 loop.close()
