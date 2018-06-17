@@ -32,21 +32,30 @@ async def connection(client_socket, address):
             addresses[address] = message
         elif type == 'm':
             print(addresses[address]+': '+message)
-        #await asyncio.sleep(0.1)
+        await asyncio.sleep(0.1)
 
 #searches for new clients and allocates them their own loop
 async def serverLoop(address, port, connections):
-    #setup using ip and port
+    # setup using ip and port
     server.bind((address, port))
     server.listen(connections)
+    server.settimeout(1)
     print('Server listening...')
     while True:
-        (client_socket, address) = server.accept()
-        print("Received an address!")
-        task = loop.create_task(connection(client_socket, address))
-        tasks.append(task)
+        print('Tying...')
+        try:
+            print('Making...')
+            (client_socket, address) = server.accept()
+            print("Received an address!")
+            asyncio.ensure_future(connection(client_socket, address))
+        except:
+            print('Except')
+            pass
+        print('Ok...')
         await asyncio.sleep(0.1)
 
-tasks = [serverLoop(IP_address, Port, 5)]
-loop.run_until_complete(asyncio.wait(tasks))
+
+
+loop.create_task(serverLoop(IP_address, Port, 5))
+loop.run_forever()
 loop.close()
