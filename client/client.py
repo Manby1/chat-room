@@ -37,7 +37,7 @@ send(name, 'name')
 while True:
     try:
         i = input("Enter a message to send.\n")
-        if i[0:1] == 'n|':
+        if i[0:2] == 'n|':
             send(i[2:], 'name')
         else:
             send(i, 'message')

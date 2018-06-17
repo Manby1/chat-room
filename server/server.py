@@ -21,17 +21,17 @@ async def connection(client_socket, address):
     print('Now listening to connection:', address)
     while True:
         data = str(client_socket.recv(512))[2:-1]
-        type = data[:1]
+        type = data[0]
         message = data[2:]
         if type == 'n':
             if address not in addresses:
-                print(addresses[address]+' has connected!')
+                print(message+' has connected!')
             else:
                 print(addresses[address]+' has changed their name to '+message+'!')
             addresses[address] = message
         elif type == 'm':
             print(addresses[address]+': '+message)
-        await asyncio.sleep(0.1)
+        #await asyncio.sleep(0.1)
 
 async def serverLoop(address, port, connections):
     #setup using ip and port
