@@ -3,6 +3,8 @@ import socket, json, asyncio
 #creates client socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+log = []
+
 #automatic connection
 with open('../server.txt') as f:
     data = f.read()
@@ -41,8 +43,6 @@ while trying:
 send(name, 'name')
 
 client.settimeout(1)
-log = []
-print(log)
 
 
 async def receiveLoop():
@@ -50,15 +50,16 @@ async def receiveLoop():
         try:
             data = str(client.recv(512))[2:-1]
             log.append(data)
+            print(log)
         except socket.timeout:
             pass
         await asyncio.sleep(0.1)
 
 async def sendLoop():
-    print(log)
     while True:
         try:
             i = input("Enter a message to send.\n")
+
             #recieve messages
             if i == '':
                 if not log == []:
