@@ -53,6 +53,8 @@ async def receiveLoop():
             print(log)
         except socket.timeout:
             pass
+        except ConnectionResetError:
+            print('Server was closed,')
         await asyncio.sleep(0.1)
 
 async def sendLoop():
