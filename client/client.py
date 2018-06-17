@@ -24,13 +24,18 @@ def send(message, type):
 name = input('Name?\n')
 
 #connect to ip and port
-print('Searching for server...')
-try:
-    client.connect((IP_address, Port))
-except ConnectionRefusedError:
-    print('No server found.')
-    quit()
-print('Connected!')
+trying = True
+while trying:
+    print('Searching for server...')
+    try:
+        client.connect((IP_address, Port))
+        print('Connected!')
+        trying = False
+    except ConnectionRefusedError:
+        print('No server found.')
+        if not input('Try again? (Y/N)\n').upper() == 'Y':
+            trying = False
+            quit()
 
 #sends nickname
 send(name, 'name')
