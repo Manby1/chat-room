@@ -1,4 +1,4 @@
-import socket
+import socket, json
 
 #creates client socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +16,7 @@ Port = int(input('Port: '))
 '''
 
 #message encoder
-commands = {'message':'m|', 'name':'n|'}
+commands = {'message':'m|', 'name':'n|', 'receive':'r|'}
 def send(message, type):
     client.send(bytes(commands[type]+str(message), 'utf-8'))
 
@@ -48,8 +48,10 @@ while True:
         #recieve messages
         if i == '':
             try:
-                data = str(client.recv(512))[2:-1]
-                print(data)
+                send('', 'receive')
+                data = json.loads(str(client.recv(512))[2:-1])
+                for i in data:
+                    print(i, data[i])
             except socket.timeout:
                 print('No new messages.')
         #if input is a command

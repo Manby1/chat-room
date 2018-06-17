@@ -1,4 +1,4 @@
-import socket, asyncio
+import socket, asyncio, json
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 loop = asyncio.get_event_loop()
@@ -10,6 +10,7 @@ IP_address = data[0:13]
 Port = int(data[14:17])
 #address list - names
 addresses = {}
+log = {}
 
 #manual connection
 '''
@@ -31,15 +32,30 @@ async def connection(client_socket, address):
             #rename command
             if type == 'n':
                 if address not in addresses:
-                    print(message+' has connected!')
+                    output = message+' has connected!'
+                    print(output)
+                    log[address] = output
                 else:
-                    print(addresses[address]+' has changed their name to '+message+'!')
+                    output = addresses[address]+' has changed their name to '+message+'!'
+                    print(output)
+                    log[adress] = output
                 addresses[address] = message
 
             #plain message
             elif type == 'm':
-                print(addresses[address]+': '+message)
-                client_socket.send(bytes('You said: '+message+'\n', 'utf-8'))
+                output = addresses[address]+': '+message
+                print(output)
+                log[address] = output
+
+            #receive messages
+            elif type == 'r':
+                myLog = {}
+                for i in log:
+                    if not i == address:
+                        myLog[i] = log[i]
+
+                jsonLog = json.dumps(myLog)
+                client_socket.send(bytes(jsonLog, 'utf-8'))
 
         except socket.timeout:
             pass
