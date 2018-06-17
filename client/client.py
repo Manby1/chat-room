@@ -50,14 +50,15 @@ async def receiveLoop():
         try:
             data = str(client.recv(512))[2:-1]
             log.append(data)
-            print(log)
         except socket.timeout:
             pass
         except ConnectionResetError:
-            print('Server was closed,')
+            print('Server was closed.')
+            client.close()
+            quit()
         await asyncio.sleep(0.1)
 
-async def sendLoop():
+async def sendLoop(log):
     while True:
         try:
             i = input("Enter a message to send.\n")
@@ -92,6 +93,6 @@ async def sendLoop():
 
 loop = asyncio.get_event_loop()
 loop.create_task(receiveLoop())
-loop.create_task(sendLoop())
+loop.create_task(sendLoop(log))
 loop.run_forever()
 loop.close()
