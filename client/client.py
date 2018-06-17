@@ -24,10 +24,12 @@ def send(message, type):
 name = input('Name?\n')
 
 #connect to ip and port
+print('Searching for server...')
 try:
     client.connect((IP_address, Port))
 except ConnectionRefusedError:
     print('No server found.')
+    quit()
 
 print('Connected!')
 
@@ -37,11 +39,14 @@ send(name, 'name')
 while True:
     try:
         i = input("Enter a message to send.\n")
-        if i[0:2] == 'n|':
-            send(i[2:], 'name')
+        if i[0] == '/':
+            if i[1:6] == 'name ':
+                send(i[6:], 'name')
+                print('Changed name to '+i[6:]+'!')
         else:
             send(i, 'message')
 
-    except Exception as e:
-        print(e)
+    except ConnectionResetError:
+        print('Server was closed.')
         client.close()
+        break
