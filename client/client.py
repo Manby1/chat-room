@@ -30,22 +30,26 @@ try:
 except ConnectionRefusedError:
     print('No server found.')
     quit()
-
 print('Connected!')
 
-#sends name
+#sends nickname
 send(name, 'name')
 
 while True:
     try:
         i = input("Enter a message to send.\n")
+        #if input is a command
         if i[0] == '/':
+            #rename command
             if i[1:6] == 'name ':
                 send(i[6:], 'name')
                 print('Changed name to '+i[6:]+'!')
+
+        #otherwise, send it as a plain message
         else:
             send(i, 'message')
 
+    #server closed
     except ConnectionResetError:
         print('Server was closed.')
         client.close()
