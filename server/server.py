@@ -49,7 +49,7 @@ async def connection(client_socket, address):
 
             #receive messages
             elif type == 'r':
-                myLog = {}
+                myLog = {'Main':'Hey'}
                 for i in log:
                     if not i == address:
                         myLog[i] = log[i]
