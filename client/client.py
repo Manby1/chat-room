@@ -28,7 +28,7 @@ trying = True
 while trying:
     print('Searching for server...')
     try:
-        print(client.connect((IP_address, Port)))
+        client.connect((IP_address, Port))
         print('Connected!')
         trying = False
     except ConnectionRefusedError:
@@ -40,7 +40,7 @@ while trying:
 #sends nickname
 send(name, 'name')
 
-client  .settimeout(1)
+client.settimeout(1)
 
 while True:
     try:

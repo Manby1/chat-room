@@ -23,18 +23,24 @@ async def connection(client_socket, address):
     client_socket.settimeout(1)
     while True:
         try:
+            #recieve and interpret data
             data = str(client_socket.recv(512))[2:-1]
             type = data[0]
             message = data[2:]
+
+            #rename command
             if type == 'n':
                 if address not in addresses:
                     print(message+' has connected!')
                 else:
                     print(addresses[address]+' has changed their name to '+message+'!')
                 addresses[address] = message
+
+            #plain message
             elif type == 'm':
                 print(addresses[address]+': '+message)
-                client_socket.send(bytes('You said: '+message, 'utf-8'))
+                client_socket.send(bytes('You said: '+message+'\n', 'utf-8'))
+
         except socket.timeout:
             pass
         await asyncio.sleep(0.1)
@@ -46,6 +52,7 @@ async def serverLoop(address, port, connections):
     server.listen(connections)
     server.settimeout(1)
     print('Server listening...')
+
     while True:
         try:
             (client_socket, address) = server.accept()
