@@ -28,7 +28,7 @@ trying = True
 while trying:
     print('Searching for server...')
     try:
-        client.connect((IP_address, Port))
+        print(client.connect((IP_address, Port)))
         print('Connected!')
         trying = False
     except ConnectionRefusedError:
@@ -40,11 +40,20 @@ while trying:
 #sends nickname
 send(name, 'name')
 
+client  .settimeout(1)
+
 while True:
     try:
         i = input("Enter a message to send.\n")
+        #recieve messages
+        if i == '':
+            try:
+                data = str(client.recv(512))[2:-1]
+                print(data)
+            except socket.timeout:
+                print('No new messages.')
         #if input is a command
-        if i[0] == '/':
+        elif i[0] == '/':
             #rename command
             if i[1:6] == 'name ':
                 send(i[6:], 'name')

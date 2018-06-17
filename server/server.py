@@ -34,7 +34,8 @@ async def connection(client_socket, address):
                 addresses[address] = message
             elif type == 'm':
                 print(addresses[address]+': '+message)
-        except:
+                client_socket.send(bytes('You said: '+message, 'utf-8'))
+        except socket.timeout:
             pass
         await asyncio.sleep(0.1)
 
@@ -50,11 +51,9 @@ async def serverLoop(address, port, connections):
             (client_socket, address) = server.accept()
             print("Received an address!")
             asyncio.ensure_future(connection(client_socket, address))
-        except:
+        except socket.timeout:
             pass
         await asyncio.sleep(0.1)
-
-
 
 loop.create_task(serverLoop(IP_address, Port, 5))
 loop.run_forever()
