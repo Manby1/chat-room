@@ -20,18 +20,22 @@ Port = int(input('Port: '))
 #individual socket handler
 async def connection(client_socket, address):
     print('Now listening to connection:', address)
+    client_socket.settimeout(1)
     while True:
-        data = str(client_socket.recv(512))[2:-1]
-        type = data[0]
-        message = data[2:]
-        if type == 'n':
-            if address not in addresses:
-                print(message+' has connected!')
-            else:
-                print(addresses[address]+' has changed their name to '+message+'!')
-            addresses[address] = message
-        elif type == 'm':
-            print(addresses[address]+': '+message)
+        try:
+            data = str(client_socket.recv(512))[2:-1]
+            type = data[0]
+            message = data[2:]
+            if type == 'n':
+                if address not in addresses:
+                    print(message+' has connected!')
+                else:
+                    print(addresses[address]+' has changed their name to '+message+'!')
+                addresses[address] = message
+            elif type == 'm':
+                print(addresses[address]+': '+message)
+        except:
+            pass
         await asyncio.sleep(0.1)
 
 #searches for new clients and allocates them their own loop
@@ -42,16 +46,12 @@ async def serverLoop(address, port, connections):
     server.settimeout(1)
     print('Server listening...')
     while True:
-        print('Tying...')
         try:
-            print('Making...')
             (client_socket, address) = server.accept()
             print("Received an address!")
             asyncio.ensure_future(connection(client_socket, address))
         except:
-            print('Except')
             pass
-        print('Ok...')
         await asyncio.sleep(0.1)
 
 
