@@ -24,8 +24,11 @@ async def connection(client_socket, address):
         type = data[:1]
         message = data[2:]
         if type == 'n':
+            if address not in addresses:
+                print(addresses[address]+' has connected!')
+            else:
+                print(addresses[address]+' has changed their name to '+message+'!')
             addresses[address] = message
-            print(addresses[address]+' has connected!')
         elif type == 'm':
             print(addresses[address]+': '+message)
         await asyncio.sleep(0.1)
