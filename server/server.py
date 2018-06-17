@@ -34,26 +34,24 @@ async def connection(client_socket, address):
                 if address not in addresses:
                     output = message+' has connected!'
                     print(output)
-                    log[address] = output
                 else:
                     output = addresses[address]+' has changed their name to '+message+'!'
                     print(output)
-                    log[adress] = output
                 addresses[address] = message
 
             #plain message
             elif type == 'm':
                 output = addresses[address]+': '+message
                 print(output)
-                log[address] = output
+                log[address] = messgae
 
             #receive messages
             elif type == 'r':
                 myLog = {'Main':'Hey'}
                 for i in log:
                     if not i == address:
-                        myLog[i] = log[i]
-
+                        myLog[addresses[i]] = log[i]
+                print(myLog)
                 jsonLog = json.dumps(myLog)
                 client_socket.send(bytes(jsonLog, 'utf-8'))
 
