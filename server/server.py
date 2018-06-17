@@ -10,7 +10,6 @@ IP_address = data[0:13]
 Port = int(data[14:17])
 #address list - names
 addresses = {}
-log = {}
 
 #manual connection
 '''
@@ -43,17 +42,7 @@ async def connection(client_socket, address):
             elif type == 'm':
                 output = addresses[address]+': '+message
                 print(output)
-                log[address] = message
-
-            #receive messages
-            elif type == 'r':
-                myLog = {}
-                for i in log:
-                    if not i == address:
-                        myLog[addresses[i]] = log[i]
-                print(myLog)
-                jsonLog = json.dumps(myLog)
-                client_socket.send(bytes(jsonLog, 'utf-8'))
+                client_socket.send(bytes(output, 'utf-8'))
 
         except socket.timeout:
             pass

@@ -1,4 +1,4 @@
-import socket, json
+import socket, json, asyncio
 
 #creates client socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,36 +41,54 @@ while trying:
 send(name, 'name')
 
 client.settimeout(1)
+log = []
+print(log)
 
-while True:
-    try:
-        i = input("Enter a message to send.\n")
-        #recieve messages
-        if i == '':
-            try:
-                send('', 'receive')
-                data = json.loads(str(client.recv(512))[2:-1])
-                if not data == {}:
-                    for i in data:
-                        print(i+': '+data[i])
+
+async def receiveLoop():
+    while True:
+        try:
+            data = str(client.recv(512))[2:-1]
+            log.append(data)
+        except socket.timeout:
+            pass
+        await asyncio.sleep(0.1)
+
+async def sendLoop():
+    print(log)
+    while True:
+        try:
+            i = input("Enter a message to send.\n")
+            #recieve messages
+            if i == '':
+                if not log == []:
+                    for i in log:
+                        print(i)
+                    log = []
                 else:
                     print('No new messages.')
-            except socket.timeout:
-                print('Socket timed out.')
 
-        #if input is a command
-        elif i[0] == '/':
-            #rename command
-            if i[1:6] == 'name ':
-                send(i[6:], 'name')
-                print('Changed name to '+i[6:]+'!')
+            #if input is a command
+            elif i[0] == '/':
+                #rename command
+                if i[1:6] == 'name ':
+                    send(i[6:], 'name')
+                    print('Changed name to '+i[6:]+'!')
 
-        #otherwise, send it as a plain message
-        else:
-            send(i, 'message')
+            #otherwise, send it as a plain message
+            else:
+                send(i, 'message')
 
-    #server closed
-    except ConnectionResetError:
-        print('Server was closed.')
-        client.close()
-        break
+        #server closed
+        except ConnectionResetError:
+            print('Server was closed.')
+            client.close()
+            break
+
+        await asyncio.sleep(0.1)
+
+loop = asyncio.get_event_loop()
+loop.create_task(receiveLoop())
+loop.create_task(sendLoop())
+loop.run_forever()
+loop.close()
