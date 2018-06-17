@@ -50,10 +50,14 @@ while True:
             try:
                 send('', 'receive')
                 data = json.loads(str(client.recv(512))[2:-1])
-                for i in data:
-                    print(i, data[i])
+                if not data == {}:
+                    for i in data:
+                        print(i+': '+data[i])
+                else:
+                    print('No new messages.')
             except socket.timeout:
-                print('No new messages.')
+                print('Socket timed out.')
+
         #if input is a command
         elif i[0] == '/':
             #rename command

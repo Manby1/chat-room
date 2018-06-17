@@ -43,11 +43,11 @@ async def connection(client_socket, address):
             elif type == 'm':
                 output = addresses[address]+': '+message
                 print(output)
-                log[address] = messgae
+                log[address] = message
 
             #receive messages
             elif type == 'r':
-                myLog = {'Main':'Hey'}
+                myLog = {}
                 for i in log:
                     if not i == address:
                         myLog[addresses[i]] = log[i]
