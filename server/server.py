@@ -36,6 +36,7 @@ async def connection(client_socket, address):
                 else:
                     output = addresses[address]+' has changed their name to '+message+'!'
                     print(output)
+                client_socket.send(bytes(output, 'utf-8'))
                 addresses[address] = message
 
             #plain message
