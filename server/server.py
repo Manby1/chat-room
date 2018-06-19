@@ -47,6 +47,11 @@ async def connection(client_socket, address):
 
         except socket.timeout:
             pass
+        except ConnectionResetError:
+            print(addresses)
+            output = addresses[client_socket.getpeername()]+' left...'
+            print(output)
+            client_socket.send(bytes(output, 'utf-8'))
         await asyncio.sleep(0.1)
 
 #searches for new clients and allocates them their own loop

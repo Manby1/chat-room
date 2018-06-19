@@ -69,12 +69,14 @@ async def sendLoop():
 
             #recieve messages
             if i == '':
+                print('###LOG###')
                 if not log.log == []:
                     for i in log.log:
                         print(i)
                     log.log = []
                 else:
                     print('No new messages.')
+                print('#########\n')
 
             #if input is a command
             elif i[0] == '/':
