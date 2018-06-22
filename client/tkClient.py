@@ -23,8 +23,8 @@ root.title("Chatroom")
 root.geometry("400x300")
 window = tkinter.PanedWindow(root)
 message = tkinter.StringVar()
-tkinter.Entry(root, textvariable=message, width=25, bg="white").place(x=10, y = 270)
-tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=300, y=270)
+tkinter.Entry(root, textvariable=message, width=33, bg="white").place(x=10, y = 270)
+tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=325, y=270)
 
 async def main():
     while True:
