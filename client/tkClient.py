@@ -81,7 +81,6 @@ while trying:
 #sends nickname
 name = 'e'
 client.send(bytes('n|'+name, 'utf-8'))
-client.settimeout(1)
 
 
 
