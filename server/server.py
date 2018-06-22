@@ -22,7 +22,6 @@ class client:
         self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
     def receive(self):
         try:
-            print(str(self.socket.recv(512))[2:-1])
             return json.loads(str(self.socket.recv(512))[2:-1])
         except socket.timeout:
             return None
