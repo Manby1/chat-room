@@ -19,7 +19,7 @@ class client:
     def setName(self, name):
         self.name = name
     def send(self, message):
-        self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
+        self.socket.send(bytes(json.dumps(message)), 'utf-8')
     def receive(self):
         try:
             return json.loads(str(self.socket.recv(512))[2:-1])
