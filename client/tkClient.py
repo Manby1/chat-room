@@ -1,49 +1,55 @@
 import socket, json, asyncio, tkinter
 
-#creates client socket
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class messageList:
+    def __init__(self, length):
+        self.length = length
+        self.items = [''] * length
+        self.labels = [None] * length
+    def addItem(self, text):
+        self.items.pop(0)
+        self.items.append(text)
+        self.labels.pop(0)
+        self.labels.append(tkinter.Label(root, text=text, font=("arial", 10, "bold"), fg="violet"))
+    def print(self):
+        for i in range(self.length):
+            if not self.labels[i] == None:
+                self.labels[i].place(x=10, y=i*20+10)
 
-class logc:
-    def __init__(self):
-        self.log = []
-
-log = logc()
-
-#message encoder
-def send(message, type):
-    client.send(bytes(commands[type] + str(message), 'utf-8'))
-
-commands = {'message':'m|', 'name':'n|', 'receive':'r|'}
-
-def handleSend(message):
-    message = message.get()
-    try:
-        # if input is a command
-        if message[0] == '/':
-            # rename command
-            if message[1:6] == 'name ':
-                send(message[6:], 'name')
-                print('Changed name to ' + message[6:] + '!')
-
-        # otherwise, send it as a plain message
-        else:
-            send(message, 'message')
-
-    # server closed
-    except ConnectionResetError:
-        print('Server was closed.')
-        client.close()
+textList = messageList(12)
 
 root = tkinter.Tk()
-root.title("Enter GameID")
+root.title("Chatroom")
 root.geometry("400x300")
 window = tkinter.PanedWindow(root)
-heading = tkinter.Label(root, text="Message:", font=("arial", 10, "bold"), fg="violet").place(x=10, y=10)
 message = tkinter.StringVar()
-idbox = tkinter.Entry(root, textvariable=message, width=25, bg="white").place(x=10, y = 30)
-sendButton = tkinter.Button(root, text="Send", width=25, height=5, bg="grey", command=lambda: handleSend(message)).place(x=10, y=50)
+tkinter.Entry(root, textvariable=message, width=25, bg="white").place(x=10, y = 270)
+tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send(message.get())).place(x=180, y=266)
 
+async def main():
+    while True:
+        root.update()
+        await asyncio.sleep(0.01)
 
+async def update():
+    while True:
+        received = receive()
+        if not received == None:
+            textList.addItem(received)
+            textList.print()
+        await asyncio.sleep(0.1)
+
+def send(message):
+    client.send(bytes('m|'+message, 'utf-8'))
+
+def receive():
+    try:
+        return str(client.recv(512))[2:-1]
+    except socket.timeout:
+        return None
+
+#creates client socket
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.settimeout(0.01)
 
 #automatic connection
 with open('../server.txt') as f:
@@ -56,10 +62,6 @@ Port = int(data[14:17])
 IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
-
-
-#nickname
-name = input('Name?\n')
 
 #connect to ip and port
 trying = True
@@ -75,63 +77,17 @@ while trying:
             trying = False
             quit()
 
-#sends nickname
-send(name, 'name')
 
+#sends nickname
+name = 'e'
+client.send(bytes('n|'+name, 'utf-8'))
 client.settimeout(1)
 
 
-async def receiveLoop():
-    while True:
-        try:
-            data = str(client.recv(512))[2:-1]
-            log.log.append(data)
-        except socket.timeout:
-            pass
-        except ConnectionResetError:
-            print('Server was closed.')
-            client.close()
-            quit()
-        await asyncio.sleep(0.1)
-
-'''async def sendLoop():
-    while True:
-        try:
-            i = input("Enter a message to send.\n")
-
-            #recieve messages
-            if i == '':
-                print('###LOG###')
-                if not log.log == []:
-                    for i in log.log:
-                        print(i)
-                    log.log = []
-                else:
-                    print('No new messages.')
-                print('#########\n')
-
-            #if input is a command
-            elif i[0] == '/':
-                #rename command
-                if i[1:6] == 'name ':
-                    send(i[6:], 'name')
-                    print('Changed name to '+i[6:]+'!')
-
-            #otherwise, send it as a plain message
-            else:
-                send(i, 'message')
-
-        #server closed
-        except ConnectionResetError:
-            print('Server was closed.')
-            client.close()
-            break
-
-        await asyncio.sleep(0.1)'''
 
 loop = asyncio.get_event_loop()
-loop.create_task(root.mainloop())
-loop.create_task(receiveLoop())
+loop.create_task(main())
+loop.create_task(update())
 loop.run_forever()
 loop.close()
 

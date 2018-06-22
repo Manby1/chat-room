@@ -10,6 +10,7 @@ IP_address = data[0:13]
 Port = int(data[14:17])
 #address list - names
 addresses = {}
+clients = {}
 
 #manual connection
 '''
@@ -19,12 +20,14 @@ Port = int(input('Port: '))
 
 #individual socket handler
 async def connection(client_socket, address):
+    me = client_socket
+    clients[me] = client_socket
     print('Now listening to connection:', address)
-    client_socket.settimeout(1)
+    clients[me].settimeout(1)
     while True:
         try:
             #recieve and interpret data
-            data = str(client_socket.recv(512))[2:-1]
+            data = str(clients[me].recv(512))[2:-1]
             type = data[0]
             message = data[2:]
 
@@ -36,14 +39,14 @@ async def connection(client_socket, address):
                 else:
                     output = addresses[address]+' has changed their name to '+message+'!'
                     print(output)
-                client_socket.send(bytes(output, 'utf-8'))
+                    clients[me].send(bytes(output, 'utf-8'))
                 addresses[address] = message
 
             #plain message
             elif type == 'm':
                 output = addresses[address]+': '+message
                 print(output)
-                client_socket.send(bytes(output, 'utf-8'))
+                clients[me].send(bytes(output, 'utf-8'))
 
         except socket.timeout:
             pass
