@@ -22,6 +22,7 @@ class client:
         self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
     def receive(self):
         try:
+            print(str(self.socket.recv(512))[2:-1])
             return json.loads(str(self.socket.recv(512))[2:-1])
         except socket.timeout:
             return None
@@ -32,9 +33,9 @@ IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
 
-def sendToAll(message):
+def sendToAll(color, message):
     for client in clients:
-        client.send(message)
+        client.send((color, message))
 
 #individual socket handler
 async def connection(client_socket, address):
@@ -54,18 +55,18 @@ async def connection(client_socket, address):
                     if address not in addresses:
                         output = message+' has connected!'
                         print(output)
-                        sendToAll(output)
+                        sendToAll(clients[me].color, output)
                     else:
                         output = addresses[address]+' has changed their name to '+message+'!'
                         print(output)
-                        sendToAll(output)
+                        sendToAll(clients[me].color, output)
                     addresses[address] = message
 
                 #plain message
                 elif type == 'm':
                     output = addresses[address]+': '+message
                     print(output)
-                    sendToAll(output)
+                    sendToAll(clients[me].color, output)
         except ConnectionResetError:
             print(addresses)
             output = addresses[clients[me].socket.getpeername()]+' left...'
