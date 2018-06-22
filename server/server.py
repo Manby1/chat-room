@@ -1,4 +1,4 @@
-import socket, asyncio, json
+import socket, asyncio, json, random
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 loop = asyncio.get_event_loop()
@@ -15,14 +15,14 @@ clients = {}
 class client:
     def __init__(self, socket):
         self.socket = socket
-        self.color = (255, 0, 0)
+        self.color = '#'+str(hex(random.randint(0, 256**3-1)))[2:]
     def setName(self, name):
         self.name = name
     def send(self, message):
         self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
     def receive(self):
         try:
-            print((self.socket.recv(512)))
+            return json.loads(str(self.socket.recv(512))[2:-1])
         except socket.timeout:
             return None
 
@@ -44,13 +44,11 @@ async def connection(client_socket, address):
     clients[me].socket.settimeout(1)
     while True:
         try:
-            print('try')
             data = clients[me].receive()
             #recieve and interpret data
             if not data == '' and not data == None:
                 type = data[0]
-                color = data[1]
-                message = data[2]
+                message = data[1]
                 #rename command
                 if type == 'n':
                     if address not in addresses:

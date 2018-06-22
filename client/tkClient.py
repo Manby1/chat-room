@@ -40,12 +40,11 @@ async def update():
         await asyncio.sleep(0.1)
 
 def send(type, message):
-    print(bytes(json.dumps((type, message)), 'utf-8'))
     client.send(bytes(json.dumps((type, message)), 'utf-8'))
 
 def receive():
     try:
-        return json.loads(client.recv(512)[2:-1])
+        return json.loads(str(client.recv(512))[2:-1])
     except socket.timeout:
         return None
 
