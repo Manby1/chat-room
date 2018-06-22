@@ -49,7 +49,7 @@ def receive():
 
 #creates client socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.settimeout(0.01)
+client.settimeout(1)
 
 #automatic connection
 with open('../server.txt') as f:

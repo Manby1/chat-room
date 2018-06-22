@@ -26,27 +26,28 @@ async def connection(client_socket, address):
     clients[me].settimeout(1)
     while True:
         try:
-            #recieve and interpret data
             data = str(clients[me].recv(512))[2:-1]
-            type = data[0]
-            message = data[2:]
+            #recieve and interpret data
+            if not data == '':
+                type = data[0]
+                message = data[2:]
 
-            #rename command
-            if type == 'n':
-                if address not in addresses:
-                    output = message+' has connected!'
-                    print(output)
-                else:
-                    output = addresses[address]+' has changed their name to '+message+'!'
+                #rename command
+                if type == 'n':
+                    if address not in addresses:
+                        output = message+' has connected!'
+                        print(output)
+                    else:
+                        output = addresses[address]+' has changed their name to '+message+'!'
+                        print(output)
+                        clients[me].send(bytes(output, 'utf-8'))
+                    addresses[address] = message
+
+                #plain message
+                elif type == 'm':
+                    output = addresses[address]+': '+message
                     print(output)
                     clients[me].send(bytes(output, 'utf-8'))
-                addresses[address] = message
-
-            #plain message
-            elif type == 'm':
-                output = addresses[address]+': '+message
-                print(output)
-                clients[me].send(bytes(output, 'utf-8'))
 
         except socket.timeout:
             pass
