@@ -22,7 +22,7 @@ class client:
         self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
     def receive(self):
         try:
-            return json.loads(self.socket.recv(512)[2:-1])
+            print((self.socket.recv(512)[2:-1]))
         except socket.timeout:
             return None
 
@@ -44,6 +44,7 @@ async def connection(client_socket, address):
     clients[me].socket.settimeout(1)
     while True:
         try:
+            print('try')
             data = clients[me].receive()
             #recieve and interpret data
             if not data == '' and not data == None:

@@ -5,11 +5,11 @@ class messageList:
         self.length = length
         self.items = [''] * length
         self.labels = [None] * length
-    def addItem(self, text):
+    def addItem(self, text, color):
         self.items.pop(0)
         self.items.append(text)
         self.labels.pop(0)
-        self.labels.append(tkinter.Label(root, text=text, font=("arial", 10, "bold"), fg="violet"))
+        self.labels.append(tkinter.Label(root, text=text, font=("arial", 10, "bold"), fg=color))
     def print(self):
         for i in range(self.length):
             if not self.labels[i] == None:
@@ -35,11 +35,12 @@ async def update():
     while True:
         received = receive()
         if not received == None:
-            textList.addItem(received)
+            textList.addItem(received[1], received[0])
             textList.print()
         await asyncio.sleep(0.1)
 
 def send(type, message):
+    print(bytes(json.dumps((type, message)), 'utf-8'))
     client.send(bytes(json.dumps((type, message)), 'utf-8'))
 
 def receive():
