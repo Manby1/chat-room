@@ -19,10 +19,10 @@ class client:
     def setName(self, name):
         self.name = name
     def send(self, message):
-        self.socket.send(bytes(message, 'utf-8'))
+        self.socket.send(bytes(json.dumps((self.color, message)), 'utf-8'))
     def receive(self):
         try:
-            return str(self.socket.recv(512))[2:-1]
+            return json.loads(self.socket.recv(512)[2:-1])
         except socket.timeout:
             return None
 
@@ -48,7 +48,8 @@ async def connection(client_socket, address):
             #recieve and interpret data
             if not data == '' and not data == None:
                 type = data[0]
-                message = data[2:]
+                color = data[1]
+                message = data[2]
                 #rename command
                 if type == 'n':
                     if address not in addresses:

@@ -15,6 +15,7 @@ class messageList:
             if not self.labels[i] == None:
                 self.labels[i].place(x=10, y=i*20+10)
 
+
 textList = messageList(12)
 
 root = tkinter.Tk()
@@ -23,7 +24,7 @@ root.geometry("400x300")
 window = tkinter.PanedWindow(root)
 message = tkinter.StringVar()
 tkinter.Entry(root, textvariable=message, width=25, bg="white").place(x=10, y = 270)
-tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send(message.get())).place(x=180, y=266)
+tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=180, y=266)
 
 async def main():
     while True:
@@ -38,12 +39,12 @@ async def update():
             textList.print()
         await asyncio.sleep(0.1)
 
-def send(message):
-    client.send(bytes('m|'+message, 'utf-8'))
+def send(type, message):
+    client.send(bytes(json.dumps((type, message)), 'utf-8'))
 
 def receive():
     try:
-        return str(client.recv(512))[2:-1]
+        return json.loads(client.recv(512)[2:-1])
     except socket.timeout:
         return None
 
@@ -79,8 +80,8 @@ while trying:
 
 
 #sends nickname
-name = 'e'
-client.send(bytes('n|'+name, 'utf-8'))
+name = input('Name: ')
+send('n', name)
 
 
 
