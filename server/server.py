@@ -12,50 +12,65 @@ Port = int(data[14:17])
 addresses = {}
 clients = {}
 
+class client:
+    def __init__(self, socket):
+        self.socket = socket
+        self.color = (255, 0, 0)
+    def setName(self, name):
+        self.name = name
+    def send(self, message):
+        self.socket.send(bytes(message, 'utf-8'))
+    def receive(self):
+        try:
+            return str(self.socket.recv(512))[2:-1]
+        except socket.timeout:
+            return None
+
 #manual connection
 '''
 IP_address = input('IP: ')
 Port = int(input('Port: '))
 '''
 
+def sendToAll(message):
+    for client in clients:
+        client.send(message)
+
 #individual socket handler
 async def connection(client_socket, address):
-    me = client_socket
-    clients[me] = client_socket
+    me = client(client_socket)
+    clients[me] = me
     print('Now listening to connection:', address)
-    clients[me].settimeout(1)
+    clients[me].socket.settimeout(1)
     while True:
         try:
-            data = str(clients[me].recv(512))[2:-1]
+            data = clients[me].receive()
             #recieve and interpret data
-            if not data == '':
+            if not data == '' and not data == None:
                 type = data[0]
                 message = data[2:]
-
                 #rename command
                 if type == 'n':
                     if address not in addresses:
                         output = message+' has connected!'
                         print(output)
+                        sendToAll(output)
                     else:
                         output = addresses[address]+' has changed their name to '+message+'!'
                         print(output)
-                        clients[me].send(bytes(output, 'utf-8'))
+                        sendToAll(output)
                     addresses[address] = message
 
                 #plain message
                 elif type == 'm':
                     output = addresses[address]+': '+message
                     print(output)
-                    clients[me].send(bytes(output, 'utf-8'))
-
-        except socket.timeout:
-            pass
+                    sendToAll(output)
         except ConnectionResetError:
             print(addresses)
-            output = addresses[client_socket.getpeername()]+' left...'
+            output = addresses[clients[me].socket.getpeername()]+' left...'
             print(output)
-            client_socket.send(bytes(output, 'utf-8'))
+            clients[me].send(output)
         await asyncio.sleep(0.1)
 
 #searches for new clients and allocates them their own loop
