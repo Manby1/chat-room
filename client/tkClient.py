@@ -1,4 +1,4 @@
-import socket, json, asyncio, tkinter
+import socket, json, asyncio, tkinter, sys
 
 class messageList:
     def __init__(self, length):
@@ -23,8 +23,14 @@ root.title("Chatroom")
 root.geometry("400x300")
 window = tkinter.PanedWindow(root)
 message = tkinter.StringVar()
-tkinter.Entry(root, textvariable=message, width=33, bg="white").place(x=10, y = 270)
-tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=325, y=270)
+if sys.platform == 'darwin':
+    #mac
+    tkinter.Entry(root, textvariable=message, width=32, bg="white").place(x=10, y = 270)
+    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=323, y=270)
+else:
+    #w-windows?
+    tkinter.Entry(root, textvariable=message, width=20, bg="white").place(x=10, y = 270)
+    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=180, y=266)
 
 async def main():
     while True:
@@ -37,7 +43,7 @@ async def update():
         if not received == None:
             textList.addItem(received[1], received[0])
             textList.print()
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 def send(type, message):
     client.send(bytes(json.dumps((type, message)), 'utf-8'))
