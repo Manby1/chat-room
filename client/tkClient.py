@@ -29,8 +29,8 @@ if sys.platform == 'darwin':
     tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=323, y=270)
 else:
     #w-windows?
-    tkinter.Entry(root, textvariable=message, width=20, bg="white").place(x=10, y = 270)
-    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=180, y=266)
+    tkinter.Entry(root, textvariable=message, width=40, bg="white").place(x=10, y = 270)
+    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=330, y=266)
 
 async def main():
     while True:
