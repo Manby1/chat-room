@@ -40,6 +40,7 @@ async def main():
 async def update():
     while True:
         received = receive()
+        print(received)
         if not received == None:
             textList.addItem(received[1], received[0])
             textList.print()
