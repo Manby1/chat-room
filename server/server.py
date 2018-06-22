@@ -33,7 +33,6 @@ Port = int(input('Port: '))
 '''
 
 def sendToAll(color, message):
-    print('w')
     for client in clients:
         client.send((color, message))
 
