@@ -10,6 +10,7 @@ IP_address = data[0:13]
 Port = int(data[14:17])
 #address list - names
 addresses = {}
+#client entities
 clients = {}
 
 class client:
