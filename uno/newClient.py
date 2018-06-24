@@ -64,8 +64,7 @@ class Button:
         self.border_size = border_size
         self.border_colour = border_colour
 
-        #self.formatted_font = pygame.font.Font('Login.ttf', font_size)
-        self.formatted_font = pygame.font.SysFont('Comic Sans MS', font_size)
+        self.formatted_font = pygame.font.Font('Login.ttf', font_size)
         self.text = self.formatted_font.render(text, True, font_colour)
         self.font_size = font_size
 
