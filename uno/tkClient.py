@@ -15,6 +15,8 @@ class messageList:
             if not self.labels[i] == None:
                 self.labels[i].place(x=10, y=i*20+10)
 
+#This comment is here because git was trying to make me merge and commit my 0 Changes.
+
 def boxSend():
     if not message.get() == '':
         send('m', message.get())
