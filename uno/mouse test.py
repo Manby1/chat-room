@@ -1,7 +1,7 @@
 import pygame, asyncio, socket
 
 pygame.init()
-display = pygame.display.set_mode((250, 250))
+display = pygame.display.set_mode((300, 250))
 
 #mouse obj
 class Mouse:
