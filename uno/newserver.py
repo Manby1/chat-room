@@ -1,7 +1,6 @@
-import socket, asyncio, json, random
+import socket, asyncio, json
 
 #Issues:
-#No end character
 #Port as letters will crash the script
 
 class Client:
@@ -40,7 +39,7 @@ class Server:
         self.clients.append(current_client)
         print("I can hear the messages of {} from far away...".format(address))
         current_client.socket.setttimeout(0.5)
-        while current_client in clients:
+        while current_client in self.clients:
             try:
                 data = current_client.receive()
                 if data:
@@ -71,15 +70,15 @@ class Server:
 
     async def serverLoop(self, max_users):
         self.socket.bind((self.IP_address, self.Port))
-        server.listen(max_users)
-        server.settimeout(1)
+        self.socket.listen(max_users)
+        self.socket.settimeout(1)
         print("I have been awakened. I can hear the sounds of the wind...")
 
         while True:
             try:
-                client_socket, address = server.accept()
+                client_socket, address = self.socket.accept()
                 print('W-we have a new client!! I really look forward to working with them...')
-                asyncio.ensure_future(clientLoop(client_socket, address))
+                asyncio.ensure_future(self.clientLoop(client_socket, address))
 
             except socket.timeout:
                 pass
@@ -88,10 +87,6 @@ class Server:
 
 
 if __name__ == '__main__':
-    #serversocket and asyncio event loop for multitasking
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    loop = asyncio.get_event_loop()
-
     #automatic connection via file with details
     try:
         with open('server.txt') as f:
@@ -102,3 +97,11 @@ if __name__ == '__main__':
         print('Error reading server file. Please input manually.')
         IP_address = input('IP Address: ')
         Port = int(input('Port: '))
+    
+    server = Server(IP_address, Port)
+    #event loop for multitasking
+    loop = asyncio.get_event_loop()
+
+    loop.create_task(server.serverLoop(5))
+    loop.run_forever()
+    loop.close()
