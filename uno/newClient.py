@@ -83,9 +83,11 @@ class Screen:
         #title widgets
         title_begin = Button((500, 400), 'Uno', 50, colour=(200, 100, 100))
 
+        #next widgets
+        next_rart = Button((500, 400), 'RART', 50, colour=(0, 0, 0), font_colour=(255, 255, 255))
+
         #list of screens and their widgets
-        self.screens = {'title':{'begin':title_begin}}
-    #def title(self):
+        self.screens = {'title':{'begin':title_begin}, 'next':{'rart':next_rart}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -94,6 +96,12 @@ class Screen:
     def title(self):
         self.switchScreen('title')
         display.fill((100, 255, 255))
+        screen.print()
+
+    def next(self):
+        self.switchScreen('next')
+        display.fill((255, 0, 0))
+        screen.print()
 
     def print(self):
         for widget in self.active_widgets.values():
@@ -109,7 +117,7 @@ screen = Screen()
 screen.switchScreen('title')
 
 screen.title()
-screen.print()
+
 
 while True:
     pygame.event.get()
@@ -117,7 +125,11 @@ while True:
     if screen.current_screen == 'title':
         if mouse.click(screen.screens['title']['begin']):
             print('Uno!')
+            screen.next()
 
+    elif screen.current_screen == 'next':
+        if mouse.click(screen.screens['next']['rart']):
+            print('Rart!')
 
     pygame.display.update()
     mouse.update()
