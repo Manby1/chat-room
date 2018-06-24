@@ -48,12 +48,12 @@ class Server:
                         message = raw_message[1]
 
                         if message_type == 'N':
-                            if current_client.name = None:
+                            if current_client.name == None:
                                 output = "{} has connected!".format(message)
                                 print(output)
                                 self.sendToAll('S',output)
                             else:
-                                output = "{} has changed their name to {}!".format(current.client.name, message)
+                                output = "{} has changed their name to {}!".format(current_client.name, message)
                                 print(output)
                                 self.sendToAll('S',output)
 
