@@ -53,7 +53,7 @@ async def connection(client_socket, address):
     me = client(client_socket)
     clients[me] = me
     print('Now listening to connection:', address)
-    clients[me].socket.settimeout(1)
+    clients[me].socket.settimeout(0.5)
     while True:
         try:
             data = clients[me].receive()

@@ -15,6 +15,10 @@ class messageList:
             if not self.labels[i] == None:
                 self.labels[i].place(x=10, y=i*20+10)
 
+def boxSend():
+    if not message.get() == '':
+        send('m', message.get())
+        box.delete(0, 'end')
 
 textList = messageList(12)
 
@@ -29,8 +33,9 @@ if sys.platform == 'darwin':
     tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=323, y=270)
 else:
     #w-windows?
-    tkinter.Entry(root, textvariable=message, width=50, bg="white").place(x=10, y = 270)
-    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=335, y=266)
+    box = tkinter.Entry(root, textvariable=message, width=50, bg="white")
+    box.place(x=10, y = 270)
+    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=boxSend).place(x=335, y=266)
 
 async def main():
     while True:
@@ -97,7 +102,7 @@ while trying:
             trying = False
             quit()
 
-client.settimeout(1)
+client.settimeout(0.1)
 
 #sends nickname
 name = input('Name: ')
