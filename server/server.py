@@ -14,7 +14,8 @@ clients = {}
 class client:
     def __init__(self, socket):
         self.socket = socket
-        self.color = '#'+str(hex(random.randint(0, 256**3-1)))[2:]
+        color = str(hex(random.randint(0, 256**3-1)))[2:]
+        self.color = '#'+'0'*(6-len(color))+color
         self.name = None
     def setName(self, name):
         self.name = name
