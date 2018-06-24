@@ -9,12 +9,18 @@ class Mouse:
         self.pressed = pygame.mouse.get_pressed()
         self.update()
         self.is_dragging = None
-        self.buttons = {'left':0, 'right':1, 'middle':2}
+        self.buttons = {'left':0, 'right':2, 'middle':1}
 
     def update(self):
         self.pos = pygame.mouse.get_pos()
         self.prev_pressed = self.pressed
         self.pressed = pygame.mouse.get_pressed()
+
+    def press(self, button):
+        button = self.buttons[button]
+        if self.pressed[button]:
+            return True
+        return False
 
     def click(self, obj, button):
         button = self.buttons[button]
@@ -35,8 +41,8 @@ class Mouse:
         return False
 
     def holding(self, obj):
-        if self.hover(obj):
-            if self.pressed[0]:
+        button = self.buttons[button]
+        if self.hover(obj) and self.pressed[button]:
                 return True
         return False
 
@@ -68,12 +74,43 @@ class Button:
         pygame.draw.rect(display, self.colour, self.rect)
         display.blit(self.text, self.text_rect)
 
+#screen
+class Screen:
+    def __init__(self):
+        self.currentScreen = None
+        self.active_widgets = None
+
+        #title widgets
+        title_begin = Button((500, 400), 'Uno', 50, colour=(200, 100, 100))
+
+        #list of screens and their widgets
+        self.screens = {'title':[title_begin]}
+    #def title(self):
+
+    def switchScreen(self, screen):
+        self.active_widgets = self.screens[screen]
+        self.current_screen = screen
+
+    def title(self):
+        display.fill((100, 255, 255))
+        self.print()
+
+    def print(self):
+        for widget in self.active_widgets:
+            widget.print()
+
 #mouse
 mouse = Mouse()
 
-#buttons
-button = Button((100, 100), 'Hey.', 10)
+#screen
+screen = Screen()
+
+#set screen to title screen
+screen.switchScreen('title')
+
+screen.title()
 
 while True:
+    pygame.event.get()
     pygame.display.update()
     mouse.update()
