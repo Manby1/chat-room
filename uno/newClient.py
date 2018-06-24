@@ -9,6 +9,7 @@ class Mouse:
         self.pressed = p.mouse.get_pressed()
         self.update()
         self.is_dragging = None
+        self.buttons = {'left':0, 'right':1, 'middle':2}
 
     def update(self):
         self.pos = p.mouse.get_pos()
@@ -16,22 +17,25 @@ class Mouse:
         self.pressed = p.mouse.get_pressed()
 
     def click(self, obj, button):
-        if obj.rect[0] <= self.pos[0] <= obj.rect[0] + obj.rect[2] and obj.rect[1] <= self.pos[1] <= obj.rect[1] + obj.rect[3]:
+        button = self.buttons[button]
+        if self.hover(obj):
             if not self.prev_pressed[button] and self.pressed[button]:
                 return True
         return False
 
     def clickScreen(self, button):
+        button = self.buttons[button]
         if not self.prev_pressed[button] and self.pressed[button]:
             return True
         return False
 
     def hover(self, obj):
-        if obj.rect[0] <= self.pos[0] <= obj.rect[0] + obj.rect[2] and obj.rect[1] <= self.pos[1] <= obj.rect[1] + obj.rect[3]:
+        if self.pos[0] in range(obj.rect[0], obj.rect[0] + obj.rect[2]) and self.pos[1] in range(obj.rect[1], obj.rect[1] + obj.rect[3]):
             return True
+        return False
 
     def holding(self, obj):
-        if obj.rect[0] <= self.pos[0] <= obj.rect[0] + obj.rect[2] and obj.rect[1] <= self.pos[1] <= obj.rect[1] + obj.rect[3]:
+        if self.hover(obj):
             if self.pressed[0]:
                 return True
         return False
