@@ -43,7 +43,7 @@ class Mouse:
     def dragging(self, obj):
         if self.click(obj, 'left') and self.holding(obj) and self.is_dragging == None:
             self.is_dragging = obj
-            self.drag_offset = (obj.center[0] + obj.rect[0] - self.pos[0], obj.center[1] - self.pos[1])
+            self.drag_offset = (obj.center[0] - self.pos[0], obj.center[1] - self.pos[1])
             return True
         elif self.is_dragging == obj and self.pressed[0]:
             return True
@@ -57,10 +57,13 @@ class Button:
         self.colour = colour
         self.formatted_font = pygame.font.Font('freesansbold.ttf', font_size)
         self.text = self.formatted_font.render(text, True, font_colour)
+        self.font_size = font_size
+        self.position(pos)
+    def position(self, pos):
         self.text_rect = self.text.get_rect()
         self.text_rect.center = pos
         self.center = pos
-        self.rect = (self.text_rect[0]-font_size, self.text_rect[1]-font_size, self.text_rect[2]+font_size*2, self.text_rect[3]+font_size*2)
+        self.rect = (self.text_rect[0] - self.font_size, self.text_rect[1] - self.font_size, self.text_rect[2] + self.font_size * 2, self.text_rect[3] + self.font_size * 2)
     def print(self):
         pygame.draw.rect(display, self.colour, self.rect)
         display.blit(self.text, self.text_rect)
