@@ -35,6 +35,7 @@ else:
     #w-windows?
     box = tkinter.Entry(root, textvariable=message, width=50, bg="white")
     box.place(x=10, y = 270)
+    box.bind('<Return>', lambda event: boxSend())
     tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=boxSend).place(x=335, y=266)
 
 async def main():
