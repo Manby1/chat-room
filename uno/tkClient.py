@@ -1,4 +1,4 @@
-import socket, json, asyncio, tkinter, sys
+import socket, json, asyncio, sys, pygame
 
 class messageList:
     def __init__(self, length):
