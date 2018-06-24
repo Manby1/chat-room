@@ -16,20 +16,20 @@ class Mouse:
         self.prev_pressed = self.pressed
         self.pressed = pygame.mouse.get_pressed()
 
-    def press(self, button):
+    def press(self, button='left'):
         button = self.buttons[button]
         if self.pressed[button]:
             return True
         return False
 
-    def click(self, obj, button):
+    def click(self, obj, button='left'):
         button = self.buttons[button]
         if self.hover(obj):
             if not self.prev_pressed[button] and self.pressed[button]:
                 return True
         return False
 
-    def clickScreen(self, button):
+    def clickScreen(self, button='left'):
         button = self.buttons[button]
         if not self.prev_pressed[button] and self.pressed[button]:
             return True
@@ -84,7 +84,7 @@ class Screen:
         title_begin = Button((500, 400), 'Uno', 50, colour=(200, 100, 100))
 
         #list of screens and their widgets
-        self.screens = {'title':[title_begin]}
+        self.screens = {'title':{'begin':title_begin}}
     #def title(self):
 
     def switchScreen(self, screen):
@@ -92,11 +92,11 @@ class Screen:
         self.current_screen = screen
 
     def title(self):
+        self.switchScreen('title')
         display.fill((100, 255, 255))
-        self.print()
 
     def print(self):
-        for widget in self.active_widgets:
+        for widget in self.active_widgets.values():
             widget.print()
 
 #mouse
@@ -109,8 +109,14 @@ screen = Screen()
 screen.switchScreen('title')
 
 screen.title()
+screen.print()
 
 while True:
     pygame.event.get()
+
+    if screen.current_screen == 'title':
+        if mouse.click(screen.screens['title']['begin']):
+            print('Uno!')
+
     pygame.display.update()
     mouse.update()
