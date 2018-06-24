@@ -8,8 +8,6 @@ with open('../server.txt') as f:
     data = f.read()
 IP_address = data[0:13]
 Port = int(data[14:17])
-#address list - names
-addresses = {}
 #client objects
 clients = {}
 
@@ -17,6 +15,7 @@ class client:
     def __init__(self, socket):
         self.socket = socket
         self.color = '#'+str(hex(random.randint(0, 256**3-1)))[2:]
+        self.name = None
     def setName(self, name):
         self.name = name
     def send(self, message):
@@ -54,7 +53,7 @@ async def connection(client_socket, address):
     clients[me] = me
     print('Now listening to connection:', address)
     clients[me].socket.settimeout(0.5)
-    while True:
+    while me in clients:
         try:
             data = clients[me].receive()
             #recieve and interpret data
@@ -64,27 +63,29 @@ async def connection(client_socket, address):
                     message = msg[1]
                     #rename command
                     if type == 'n':
-                        if address not in addresses:
+                        if clients[me].name == None:
                             output = message+' has connected!'
                             print(output)
                             sendToAll(clients[me].color, output)
                         else:
-                            output = addresses[address]+' has changed their name to '+message+'!'
+                            output = clients[me].name+' has changed their name to '+message+'!'
                             print(output)
                             sendToAll(clients[me].color, output)
-                        addresses[address] = message
+                        clients[me].name = message
 
                     #plain message
                     elif type == 'm':
-                        output = addresses[address]+': '+message
+                        output = clients[me].name+': '+message
                         print(output)
                         sendToAll(clients[me].color, output)
         except ConnectionResetError:
-            print(addresses)
-            output = addresses[clients[me].socket.getpeername()]+' left...'
+            output = clients[me].name+' left...'
             print(output)
-            clients[me].send(output)
+            color = clients[me].color
+            clients.pop(clients[me])
+            sendToAll(color, output)
         await asyncio.sleep(0.1)
+    print('Client loop ended.')
 
 #searches for new clients and allocates them their own loop
 async def serverLoop(address, port, connections):

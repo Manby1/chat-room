@@ -39,9 +39,16 @@ else:
     tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=boxSend).place(x=335, y=266)
 
 async def main():
-    while True:
-        root.update()
-        await asyncio.sleep(0.01)
+    running = True
+    while running:
+        try:
+            root.update()
+            await asyncio.sleep(0.01)
+        except tkinter.TclError:
+            running = False
+    client.close()
+    loop.close()
+    quit()
 
 async def update():
     while True:
