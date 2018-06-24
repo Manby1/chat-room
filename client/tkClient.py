@@ -40,19 +40,32 @@ async def main():
 async def update():
     while True:
         received = receive()
-        if not received == None:
-            textList.addItem(received[1], received[0])
+        if not received == []:
+            for msg in received:
+                textList.addItem(msg[1], msg[0])
             textList.print()
         await asyncio.sleep(0.01)
 
 def send(type, message):
+    print(type, message)
     client.send(bytes(json.dumps((type, message)), 'utf-8'))
 
 def receive():
     try:
-        return json.loads(str(client.recv(512))[2:-1])
+        msgs = split(str(client.recv(512))[2:-1])
+        return list(map(lambda msg: json.loads(msg), msgs))
     except socket.timeout:
-        return None
+        return []
+
+def split(text):
+    items = []
+    string = ''
+    for i in text:
+        string += i
+        if i == ']':
+            items.append(string)
+            string = ''
+    return items
 
 #creates client socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -23,9 +23,20 @@ class client:
         self.socket.send(bytes(json.dumps(message), 'utf-8'))
     def receive(self):
         try:
-            return json.loads(str(self.socket.recv(512))[2:-1])
+            msgs = split(str(self.socket.recv(512))[2:-1])
+            return list(map(lambda msg: json.loads(msg), msgs))
         except socket.timeout:
-            return None
+            return []
+
+def split(text):
+    items = []
+    string = ''
+    for i in text:
+        string += i
+        if i == ']':
+            items.append(string)
+            string = ''
+    return items
 
 #manual connection
 '''
@@ -47,26 +58,27 @@ async def connection(client_socket, address):
         try:
             data = clients[me].receive()
             #recieve and interpret data
-            if not data == '' and not data == None:
-                type = data[0]
-                message = data[1]
-                #rename command
-                if type == 'n':
-                    if address not in addresses:
-                        output = message+' has connected!'
-                        print(output)
-                        sendToAll(clients[me].color, output)
-                    else:
-                        output = addresses[address]+' has changed their name to '+message+'!'
-                        print(output)
-                        sendToAll(clients[me].color, output)
-                    addresses[address] = message
+            if not data == []:
+                for msg in data:
+                    type = msg[0]
+                    message = msg[1]
+                    #rename command
+                    if type == 'n':
+                        if address not in addresses:
+                            output = message+' has connected!'
+                            print(output)
+                            sendToAll(clients[me].color, output)
+                        else:
+                            output = addresses[address]+' has changed their name to '+message+'!'
+                            print(output)
+                            sendToAll(clients[me].color, output)
+                        addresses[address] = message
 
-                #plain message
-                elif type == 'm':
-                    output = addresses[address]+': '+message
-                    print(output)
-                    sendToAll(clients[me].color, output)
+                    #plain message
+                    elif type == 'm':
+                        output = addresses[address]+': '+message
+                        print(output)
+                        sendToAll(clients[me].color, output)
         except ConnectionResetError:
             print(addresses)
             output = addresses[clients[me].socket.getpeername()]+' left...'
