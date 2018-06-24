@@ -1,7 +1,7 @@
 import pygame, asyncio, socket
 
 pygame.init()
-display = pygame.display.set_mode((250, 150))
+display = pygame.display.set_mode((250, 250))
 
 #mouse obj
 class Mouse:
@@ -9,12 +9,18 @@ class Mouse:
         self.pressed = pygame.mouse.get_pressed()
         self.update()
         self.is_dragging = None
-        self.buttons = {'left':0, 'right':1, 'middle':2}
+        self.buttons = {'left':0, 'right':2, 'middle':1}
 
     def update(self):
         self.pos = pygame.mouse.get_pos()
         self.prev_pressed = self.pressed
         self.pressed = pygame.mouse.get_pressed()
+
+    def press(self, button):
+        button = self.buttons[button]
+        if self.pressed[button]:
+            return True
+        return False
 
     def click(self, obj, button):
         button = self.buttons[button]
@@ -72,7 +78,7 @@ class Button:
 mouse = Mouse()
 
 #buttons
-button = Button((125, 100), 'TEST', 20)
+button = Button((125, 200), 'TEST', 20)
 
 clock = pygame.time.Clock()
 colours = {True:(0, 255, 0), False:(255, 0, 0)}
@@ -82,13 +88,27 @@ print('click, clickScreen, hover, holding, dragging')
 while True:
     display.fill((255, 255, 255))
     pygame.event.get()
-    pygame.draw.circle(display, colours.get(mouse.click(button, 'left')), (25, 25), 20)
-    pygame.draw.circle(display, colours.get(mouse.clickScreen('left')), (75, 25), 20)
-    pygame.draw.circle(display, colours.get(mouse.hover(button)), (125, 25), 20)
-    pygame.draw.circle(display, colours.get(mouse.holding(button)), (175, 25), 20)
-    pygame.draw.circle(display, colours.get(mouse.dragging(button)), (225, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.press('left')), (25, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.press('right')), (25, 75), 20)
+    pygame.draw.circle(display, colours.get(mouse.press('middle')), (25, 125), 20)
+
+    pygame.draw.circle(display, colours.get(mouse.click(button, 'left')), (75, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.click(button, 'right')), (75, 75), 20)
+    pygame.draw.circle(display, colours.get(mouse.click(button, 'middle')), (75, 125), 20)
+
+    pygame.draw.circle(display, colours.get(mouse.clickScreen('left')), (125, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.clickScreen('right')), (125, 75), 20)
+    pygame.draw.circle(display, colours.get(mouse.clickScreen('middle')), (125, 125), 20)
+
+    pygame.draw.circle(display, colours.get(mouse.hover(button)), (175, 25), 20)
+
+    pygame.draw.circle(display, colours.get(mouse.holding(button)), (225, 25), 20)
+
+    pygame.draw.circle(display, colours.get(mouse.dragging(button)), (275, 25), 20)
+
     if mouse.dragging(button):
         button.position((mouse.pos[0] + mouse.drag_offset[0], mouse.pos[1] + mouse.drag_offset[1]))
+
     button.print()
     pygame.display.update()
     mouse.update()
