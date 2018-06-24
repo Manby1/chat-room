@@ -1,7 +1,7 @@
 import pygame, asyncio, socket
 
 pygame.init()
-display = pygame.display.set_mode((1000, 800))
+display = pygame.display.set_mode((250, 150))
 
 #mouse obj
 class Mouse:
@@ -69,8 +69,21 @@ class Button:
 mouse = Mouse()
 
 #buttons
-button = Button((100, 100), 'Hey.', 10)
+button = Button((125, 100), 'TEST', 20)
 
+clock = pygame.time.Clock()
+colours = {True:(0, 255, 0), False:(255, 0, 0)}
+
+display.fill((255, 255, 255))
+print('click, clickScreen, hover, holding, dragging')
 while True:
+    pygame.event.get()
+    pygame.draw.circle(display, colours.get(mouse.click(button, 'left')), (25, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.clickScreen('left')), (75, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.hover(button)), (125, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.holding(button)), (175, 25), 20)
+    pygame.draw.circle(display, colours.get(mouse.dragging(button)), (225, 25), 20)
+    button.print()
     pygame.display.update()
     mouse.update()
+    clock.tick(50)
