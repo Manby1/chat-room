@@ -84,7 +84,10 @@ clock = pygame.time.Clock()
 colours = {True:(0, 255, 0), False:(255, 0, 0)}
 
 
-print('click, clickScreen, hover, holding, dragging')
+print('        click|clickScreen|hover|holding|dragging')
+print('left')
+print('right')
+print('middle')
 while True:
     display.fill((255, 255, 255))
     pygame.event.get()
