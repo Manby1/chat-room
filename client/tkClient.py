@@ -29,8 +29,10 @@ window = tkinter.PanedWindow(root)
 message = tkinter.StringVar()
 if sys.platform == 'darwin':
     #mac
-    tkinter.Entry(root, textvariable=message, width=32, bg="white").place(x=10, y = 270)
-    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=lambda: send('m', message.get())).place(x=323, y=270)
+    box = tkinter.Entry(root, textvariable=message, width=32, bg="white")
+    box.place(x=10, y = 270)
+    box.bind('<Return>', lambda event: boxSend())
+    tkinter.Button(root, text="Send", width=5, height=1, bg="grey", command=boxSend).place(x=323, y=270)
 else:
     #w-windows?
     box = tkinter.Entry(root, textvariable=message, width=50, bg="white")
