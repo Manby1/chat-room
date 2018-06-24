@@ -59,11 +59,15 @@ class Mouse:
 
 #gui button
 class Button:
-    def __init__(self, pos, text, font_size, colour = (255, 200, 100), font_colour = (0, 0, 0)):
+    def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
         self.colour = colour
+        self.border_size = border_size
+        self.border_colour = border_colour
+
         self.formatted_font = pygame.font.Font('freesansbold.ttf', font_size)
         self.text = self.formatted_font.render(text, True, font_colour)
         self.font_size = font_size
+
         self.position(pos)
     def position(self, pos):
         self.text_rect = self.text.get_rect()
@@ -71,7 +75,11 @@ class Button:
         self.center = pos
         self.rect = (self.text_rect[0] - self.font_size, self.text_rect[1] - self.font_size, self.text_rect[2] + self.font_size * 2, self.text_rect[3] + self.font_size * 2)
     def print(self):
-        pygame.draw.rect(display, self.colour, self.rect)
+        if not self.border_size == 0:
+            pygame.draw.rect(display, self.border_colour, self.rect)
+            pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
+        else:
+            pygame.draw.rect(display, self.colour, self.rect)
         display.blit(self.text, self.text_rect)
 
 #screen
@@ -81,7 +89,7 @@ class Screen:
         self.active_widgets = None
 
         #title widgets
-        title_begin = Button((500, 400), 'Uno', 50, colour=(200, 100, 100))
+        title_begin = Button((500, 400), 'Uno', 50, 20, (0, 0, 255), colour=(80, 80, 255))
 
         #next widgets
         next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255))
