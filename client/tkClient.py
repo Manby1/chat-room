@@ -67,7 +67,7 @@ def send(type, message):
 
 def receive():
     try:
-        msgs = split(str(client.recv(512))[2:-1])
+        msgs = split(client.recv(512).decode())
         return list(map(lambda msg: json.loads(msg), msgs))
     except socket.timeout:
         return []

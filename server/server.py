@@ -22,7 +22,7 @@ class client:
         self.socket.send(bytes(json.dumps(message), 'utf-8'))
     def receive(self):
         try:
-            msgs = split(str(self.socket.recv(512))[2:-1])
+            msgs = split(self.socket.recv(512).decode())
             return list(map(lambda msg: json.loads(msg), msgs))
         except socket.timeout:
             return []

@@ -52,7 +52,7 @@ client.settimeout(1)
 async def receiveLoop():
     while True:
         try:
-            data = str(client.recv(512))[2:-1]
+            data = client.recv(512).decode()
             log.log.append(data)
         except socket.timeout:
             pass
