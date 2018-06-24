@@ -66,7 +66,8 @@ class Server:
             except ConnectionResetError:
                 print("Wah!! {} left! Did I do something wrong? (｡•́︿•̀｡)".format(current_client.name))
                 self.clients.remove(current_client)
-                self.sendToAll('{} has left...'.format(current_client.name))
+                output = '{} has left...'.format(current_client.name)
+                self.sendToAll('S',output)
 
     async def serverLoop(self, max_users):
         self.socket.bind((self.IP_address, self.Port))
