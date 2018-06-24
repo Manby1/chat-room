@@ -64,7 +64,8 @@ class Button:
         self.border_size = border_size
         self.border_colour = border_colour
 
-        self.formatted_font = pygame.font.Font('Login.ttf', font_size)
+        #self.formatted_font = pygame.font.Font('Login.ttf', font_size)
+        self.formatted_font = pygame.font.SysFont('Comic Sans MS', font_size)
         self.text = self.formatted_font.render(text, True, font_colour)
         self.font_size = font_size
 
@@ -92,7 +93,7 @@ class Screen:
         title_begin = Button((500, 400), 'Uno', 50, 20, (0, 0, 255), colour=(80, 80, 255), font_colour=(180, 180, 220))
 
         #next widgets
-        next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255))
+        next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0))
         next_back = Button((60, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
 
         #list of screens and their widgets
