@@ -28,7 +28,7 @@ they wanted to send - in this case, 'hel--lo'. Their message would become:
 ('M','hel--lo'). This would be converted into "['M','hel--lo']" by json (into a string object)
 and made into a bytes object. Then, the character '\uFFFF' (that was previously stripped from
 all of the messages) would be added to the end to signify the end.
-b"['M','hel-lo']\uFFFF" would be sent. (b"" is a bytes object).
+b"['M','hel-lo']\uFFFF" would be sent (b"" is a bytes object).
 
 Let's say two messages were sent rapid-fire. The python sockets module would put them together, so
 if the example message would sent twice, the server/client would receive:
@@ -49,7 +49,7 @@ into actual lists! We would finally have:
 * M - Chat message specification - support is currently non-existant for this type of message.
 * L - Leave specification. Useful for standard exit procedures - can be otherwise inferred.
 * C - Card pick - sent as standard card codes (shown in image files).
-* E - Other event, e.g. Wild +4 Challenge - non chat, non card pick.
+* E - Other event, e.g. Wild +4 Challenge - non chat, non card pick, call Uno, challenge Uno.
 
 #### Server -> Client:
 * J - Join event - broadcast a join event with user name, colour, and ID.
