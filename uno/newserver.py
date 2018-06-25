@@ -1,10 +1,11 @@
 import socket, asyncio, json
 
 class Client:
-    def __init__(self, socket, address):
+    def __init__(self, socket, address, clientid):
         self.socket = socket
         self.address = address
         self.name = None
+        self.ID = clientid
 
     def send(self, message_type, message):
         #simplified send function
@@ -26,13 +27,15 @@ class Server:
         self.IP_address = IP_address
         self.Port = Port
         self.clients = []
+        self.clientidinc = 0
     
     def sendToAll(self, message_type, message):
         for clientobj in self.clients:
             clientobj.send(message_type, message)
 
     async def clientLoop(self, client_socket, address):
-        current_client = Client(client_socket, address)
+        current_client = Client(client_socket, address, self.clientidinc)
+        self.clientidinc += 1
         self.clients.append(current_client)
         print("I can hear the messages of {} from far away...".format(address))
         current_client.socket.setttimeout(0.5)

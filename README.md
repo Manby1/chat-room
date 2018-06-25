@@ -16,29 +16,29 @@ For chat-room, it should be in the chat-room folder.
 
 ### A more thorough explanation of how send and receive works:
 
-The user wants to send the message 'hel-\uFFFF-lo'. 
-They have decided they want to put the unicode character \uFFFF into their message - 
+The user wants to send the message `'hel-\uFFFF-lo'`. 
+They have decided they want to put the unicode character `\uFFFF` into their message - 
 this would never happen though, because it would either be interpreted as single characters or 
-they would not be able to type it in. But let's say they did - the \uFFFF would be stripped from 
+they would not be able to type it in. But let's say they did - the `\uFFFF` would be stripped from 
 the message anyways by this code.
 
 The message is put into a tuple where the first element is the message type - 
 e.g. M for message, N for name, (E for error?). The second element is their actual message that
-they wanted to send - in this case, 'hel--lo'. Their message would become:
-('M','hel--lo'). This would be converted into "['M','hel--lo']" by json (into a string object)
-and made into a bytes object. Then, the character '\uFFFF' (that was previously stripped from
+they wanted to send - in this case, `'hel--lo'`. Their message would become:
+`('M','hel--lo')`. This would be converted into `"['M','hel--lo']"` by json (into a string object)
+and made into a bytes object. Then, the character `'\uFFFF'` (that was previously stripped from
 all of the messages) would be added to the end to signify the end.
-b"['M','hel-lo']\uFFFF" would be sent (b"" is a bytes object).
+`b"['M','hel-lo']\uFFFF"` would be sent (b"" is a bytes object).
 
 Let's say two messages were sent rapid-fire. The python sockets module would put them together, so
 if the example message would sent twice, the server/client would receive:
-b"['M','hel-lo']\uFFFF['M','hel-lo']\uFFFF". After being decoded back into a string from bytes,
-this would be split by the end characters '\uFFFF' and made into the list:
-["['M','hel-lo']","['M','hel-lo']",""]. Notice the lists are still strings and there is a final
+`b"['M','hel-lo']\uFFFF['M','hel-lo']\uFFFF"`. After being decoded back into a string from bytes,
+this would be split by the end characters `'\uFFFF'` and made into the list:
+`["['M','hel-lo']","['M','hel-lo']",""]`. Notice the lists are still strings and there is a final
 empty element left there because of how the python split function works.
 The last element would be ignored, and then the module json would be used to convert the list strings
 into actual lists! We would finally have:
-[['M','hel-lo'],['M','hel-lo']].
+`[['M','hel-lo'],['M','hel-lo']]`.
 
 ***
 
