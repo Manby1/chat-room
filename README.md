@@ -1,12 +1,20 @@
 # chat-room
 
+## Requirements:
+
+Python standard library. For uno, pygame is required.
+
+## Hosting:
+
+Host must port forward to enable access to their server. Note this is the case whenever the user wants to host a server in any game - unless somebody else is hosting for you (Steam).
+
 server.txt is a recommended file so you don't have to type in your IP and Port when opening.
-In uno, it should be in the uno folder.
-In chat-room, it should be in the chat-room folder.
+For uno, it should be in the uno folder.
+For chat-room, it should be in the chat-room folder.
 
 ***
 
-A more thorough explanation of send and receive:
+### A more thorough explanation of how send and receive works:
 
 The user wants to send the message 'hel-\uFFFF-lo'. 
 They have decided they want to put the unicode character \uFFFF into their message - 
@@ -34,15 +42,17 @@ into actual lists! We would finally have:
 
 ***
 
-Message characterizations
-Client -> Server:
-N - Name specification. Sent when connection has ocurred.
-M - Chat message specification - support is currently non-existant for this type of message.
-L - Leave specification. Useful for standard exit procedures - can be otherwise inferred.
-C - Card pick - sent as standard card codes (shown in image files).
-E - Other event, e.g. Wild +4 Challenge - non chat, non card pick.
-Server -:> Client:
-J - Join event - broadcast a join event with user name, colour, and ID.
-B - Broadcast - Redirection of a chat message - unsupported
-C - Card play - broadcast the most recent move. Send with a player ID and a card play code.
-E - Other event, e.g. Wild +4 Challenge. Similar to Client 'E', but ID is specified.
+### Message characterizations
+
+#### Client -> Server:
+* N - Name specification. Sent when connection has ocurred.
+* M - Chat message specification - support is currently non-existant for this type of message.
+* L - Leave specification. Useful for standard exit procedures - can be otherwise inferred.
+* C - Card pick - sent as standard card codes (shown in image files).
+* E - Other event, e.g. Wild +4 Challenge - non chat, non card pick.
+
+#### Server -:> Client:
+* J - Join event - broadcast a join event with user name, colour, and ID.
+* B - Broadcast - Redirection of a chat message - unsupported
+* C - Card play - broadcast the most recent move. Send with a player ID and a card play code.
+* E - Other event, e.g. Wild +4 Challenge. Similar to Client 'E', but ID is specified.
