@@ -1,8 +1,5 @@
 import socket, asyncio, json
 
-#Issues:
-#Port as letters will crash the script
-
 class Client:
     def __init__(self, socket, address):
         self.socket = socket

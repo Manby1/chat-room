@@ -31,3 +31,18 @@ empty element left there because of how the python split function works.
 The last element would be ignored, and then the module json would be used to convert the list strings
 into actual lists! We would finally have:
 [['M','hel-lo'],['M','hel-lo']].
+
+***
+
+Message characterizations
+Client -> Server:
+N - Name specification. Sent when connection has ocurred.
+M - Chat message specification - support is currently non-existant for this type of message.
+L - Leave specification. Useful for standard exit procedures - can be otherwise inferred.
+C - Card pick - sent as standard card codes (shown in image files).
+E - Other event, e.g. Wild +4 Challenge - non chat, non card pick.
+Server -:> Client:
+J - Join event - broadcast a join event with user name, colour, and ID.
+B - Broadcast - Redirection of a chat message - unsupported
+C - Card play - broadcast the most recent move. Send with a player ID and a card play code.
+E - Other event, e.g. Wild +4 Challenge. Similar to Client 'E', but ID is specified.
