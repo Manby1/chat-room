@@ -3,7 +3,7 @@ import pygame, asyncio, socket
 pygame.init()
 display = pygame.display.set_mode((1000, 800))
 
-#mouse obj
+#Mouse Object
 class Mouse:
     def __init__(self):
         self.pressed = pygame.mouse.get_pressed()
@@ -57,7 +57,7 @@ class Mouse:
             self.is_dragging = None
         return False
 
-#gui button
+#GUI Buttons
 class Button:
     def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
         self.colour = colour
@@ -89,13 +89,15 @@ class Screen:
 
         #title widgets
         title_begin = Button((500, 400), 'Uno', 50, 20, (0, 0, 255), colour=(80, 80, 255), font_colour=(180, 180, 220))
+        title_rainbow = Image('rainbow.png', (100, 100))
 
         #next widgets
         next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0))
         next_back = Button((60, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
 
         #list of screens and their widgets
-        self.screens = {'title':{'begin':title_begin}, 'next':{'rart':next_rart, 'back':next_back}}
+        self.screens = {'title':{'begin':title_begin, 'rainbow':title_rainbow},
+                        'next':{'rart':next_rart, 'back':next_back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -118,6 +120,27 @@ class Screen:
     def getWidget(self, screen, name):
         return self.screens[screen][name]
 
+#Images
+class Image:
+    def __init__(self, filename, pos):
+        self.image = pygame.image.load(filename)
+        self.dimensions = self.image.get_size()
+        self.position(pos)
+
+    def position(self, pos):
+        self.pos = pos
+
+    def getPixel(self, coords):
+        pixel = self.image.get_at(coords)
+        return (pixel[0], pixel[1], pixel[2])
+
+    def setPixel(self, coords, value):
+        self.image.set_at(coords, pygame.Color(value[0], value[1], value[2]))
+
+    def print(self):
+        display.blit(self.image, self.pos)
+
+
 #mouse
 mouse = Mouse()
 
@@ -132,6 +155,7 @@ while True:
 
     #title screen loop
     if screen.current_screen == 'title':
+        print(screen.getWidget('title', 'rainbow').getPixel((0, 0)))
         if mouse.click(screen.getWidget('title', 'begin')):
             screen.next()
 
@@ -140,6 +164,12 @@ while True:
         if mouse.click(screen.getWidget('next', 'rart')):
             print('Rart!')
         elif mouse.click(screen.getWidget('next', 'back')):
+            dimensions = screen.getWidget('title', 'rainbow').dimensions
+            for x in range(dimensions[0]):
+                for y in range(dimensions[1]):
+                    #screen.getWidget('title', 'rainbow').setPixel((x, y), (x*(255/dimensions[0]), y*(255/dimensions[1]), 0))
+                    screen.getWidget('title', 'rainbow').setPixel((x, y), (100, 0, 0))
+
             screen.title()
 
     pygame.display.update()
