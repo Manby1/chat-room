@@ -51,7 +51,7 @@ into actual lists! We would finally have:
 * C - Card pick - sent as standard card codes (shown in image files).
 * E - Other event, e.g. Wild +4 Challenge - non chat, non card pick.
 
-#### Server -:> Client:
+#### Server -> Client:
 * J - Join event - broadcast a join event with user name, colour, and ID.
 * B - Broadcast - Redirection of a chat message - unsupported
 * C - Card play - broadcast the most recent move. Send with a player ID and a card play code.
