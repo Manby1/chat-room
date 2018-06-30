@@ -186,8 +186,15 @@ class Screen:
         join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
         join_port = Entry((500, 430), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
         join_join = Button((700, 580), 'Join', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
+        join_auto = Button((300, 580), 'Auto-Connect', 35, colour=(255, 255, 255), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 0, 0))
         join_ip_text = Text((500, 250), 'IP Address:', 30)
         join_port_text = Text((500, 380), 'Port:', 30)
+
+        #name widgets
+        name_title = Text((500, 70), 'Connected!', 80, font_colour=(160, 160, 50))
+        name_name = Entry((500, 400), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
+        name_name_text = Text((500, 350), 'Name:', 30)
+        name_go = Button((500, 580), 'GO!', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
 
         #back
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
@@ -195,7 +202,8 @@ class Screen:
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
                         'play':{'title':play_title, 'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
+                        'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back, 'auto':join_auto},
+                        'name':{'title':name_title, 'name_text':name_name_text, 'name':name_name, 'go':name_go, 'back':back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -213,6 +221,11 @@ class Screen:
 
     def join(self):
         self.switchScreen('join')
+        display.fill((255, 255, 0))
+        screen.print()
+
+    def name(self):
+        self.switchScreen('name')
         display.fill((255, 255, 0))
         screen.print()
 
@@ -267,6 +280,9 @@ screen.title()
 #clock
 clock = pygame.time.Clock()
 
+#Client Socket
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 while True:
     events = pygame.event.get()
     for event in events:
@@ -310,15 +326,46 @@ while True:
             screen.play()
 
         elif mouse.click(screen.getWidget('join', 'join')):
-            print('Join')
+            IP_Address = screen.getWidget('join', 'ip').raw_text
+            Port = int(screen.getWidget('join', 'port').raw_text)
+            client.connect((IP_Address, Port))
+            screen.name()
 
-        if screen.using.__class__ == Entry:
-            for event in events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key in pygame_keys:
-                        screen.using.newCharacter(pygame_keys[event.key])
-                    elif event.key == pygame.K_BACKSPACE:
-                        screen.using.newCharacter(None)
+        elif mouse.click(screen.getWidget('join', 'auto')):
+            #automatic connection
+            with open('server.txt') as f:
+                data = f.read()
+                IP_Address = data[0:13]
+                Port = int(data[14:17])
+            client.connect((IP_Address, Port))
+            screen.name()
+
+    elif screen.current_screen == 'name':
+        if mouse.clickScreen():
+            if screen.using.__class__ == Entry:
+                screen.using.highlight(False)
+            screen.using = None
+
+        if mouse.click(screen.getWidget('name', 'name')):
+            screen.using = screen.getWidget('name', 'name')
+            screen.getWidget('name', 'name').highlight(True)
+
+        if mouse.click(screen.getWidget('name', 'back')):
+            client.detach()
+            screen.join()
+
+        elif mouse.click(screen.getWidget('name', 'go')):
+            name = screen.getWidget('name', 'name').raw_text
+            client.send(bytes(name, 'utf-8'))
+
+
+    if screen.using.__class__ == Entry:
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key in pygame_keys:
+                    screen.using.newCharacter(pygame_keys[event.key])
+                elif event.key == pygame.K_BACKSPACE:
+                    screen.using.newCharacter(None)
 
 
     clock.tick(100)

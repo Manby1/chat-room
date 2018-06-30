@@ -38,7 +38,7 @@ class Server:
         self.clientidinc += 1
         self.clients.append(current_client)
         print("I can hear the messages of {} from far away...".format(address))
-        current_client.socket.setttimeout(0.5)
+        current_client.socket.settimeout(0.5)
         while current_client in self.clients:
             try:
                 data = current_client.receive()
