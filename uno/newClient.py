@@ -1,6 +1,8 @@
 import pygame, asyncio, socket
 
 pygame.init()
+pygame.display.set_icon(pygame.image.load('icon.png'))
+pygame.display.set_caption('Uno!')
 display = pygame.display.set_mode((1000, 800))
 
 #Mouse Object
