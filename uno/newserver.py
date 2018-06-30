@@ -16,7 +16,7 @@ class Client:
     def receive(self):
         try:
             messages = self.socket.recv(512).decode().split('\uFFFF')
-            messages = [json.loads(i) for i in messages]
+            messages = [json.loads(i) for i in messages[:-1]]
             return messages
         except socket.timeout:
             return None
@@ -50,6 +50,7 @@ class Server:
                         if message_type == 'N':
                             if current_client.name == None:
                                 output = "{} has connected!".format(message)
+                                current_client.name = message
                                 print(output)
                                 self.sendToAll('S',output)
                             else:
