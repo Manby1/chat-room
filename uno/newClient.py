@@ -172,15 +172,17 @@ class Screen:
         self.using = None
 
         #title widgets
-        title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(180, 180, 220), width = 240, height = 150)
+        title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(220, 220, 255), width = 240, height = 150)
         title_quit = Button((700, 600), 'Quit', 50, 20, (200, 0, 0), colour=(255, 0, 50), font_colour=(255, 220, 220), width = 240, height = 150)
         title_splash = Image('splash.png', (500, 250))
 
         #play widgets
-        play_host = Button((300, 400), 'Host', 55, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0), width = 240, height = 150)
-        play_join = Button((700, 400), 'Join', 55, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (0, 200, 0), width = 240, height = 150)
+        play_title = Text((500, 70), 'Play Uno!', 80, font_colour=(20, 20, 140))
+        play_host = Button((300, 400), 'Host', 55, colour=(140, 25, 240), font_colour=(255, 255, 255), border_size=30, border_colour=(110, 5, 200), width = 240, height = 150)
+        play_join = Button((700, 400), 'Join', 55, colour=(255, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (200, 200, 0), width = 240, height = 150)
 
         #join widgets
+        join_title = Text((500, 70), 'Join Game', 80, font_colour=(160, 160, 50))
         join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
         join_port = Entry((500, 430), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
         join_join = Button((700, 580), 'Join', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
@@ -188,12 +190,12 @@ class Screen:
         join_port_text = Text((500, 380), 'Port:', 30)
 
         #back
-        back = Button((70, 50), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0))
+        back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
-                        'play':{'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
+                        'play':{'title':play_title, 'host':play_host, 'join':play_join, 'back':back},
+                        'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -206,7 +208,7 @@ class Screen:
 
     def play(self):
         self.switchScreen('play')
-        display.fill((255, 0, 0))
+        display.fill((60, 60, 255))
         screen.print()
 
     def join(self):
