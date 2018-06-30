@@ -59,20 +59,27 @@ class Mouse:
 
 #GUI Buttons
 class Button:
-    def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
+    def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None):
         self.colour = colour
         self.border_size = border_size
         self.border_colour = border_colour
         self.formatted_font = pygame.font.Font('Login.ttf', font_size)
         self.text = self.formatted_font.render(text, True, font_colour)
         self.font_size = font_size
+        self.width = width
+        self.height = height
 
         self.position(pos)
     def position(self, pos):
         self.text_rect = self.text.get_rect()
         self.text_rect.center = pos
         self.center = pos
-        self.rect = (self.text_rect[0] - self.font_size, self.text_rect[1] - self.font_size, self.text_rect[2] + self.font_size * 2, self.text_rect[3] + self.font_size * 2)
+        if self.width == None:
+            self.width = self.text_rect[2] + self.font_size * 2
+        if self.height == None:
+            self.height = self.text_rect[3] + self.font_size * 2
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), self.width, self.height)
+
     def print(self):
         if not self.border_size == 0:
             pygame.draw.rect(display, self.border_colour, self.rect)
@@ -88,15 +95,15 @@ class Screen:
         self.active_widgets = None
 
         #title widgets
-        title_begin = Button((500, 400), 'Uno', 50, 20, (0, 0, 255), colour=(80, 80, 255), font_colour=(180, 180, 220))
-        title_rainbow = Image('rainbow.png', (100, 100))
+        title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(180, 180, 220), width = 240, height = 150)
+        title_quit = Button((700, 600), 'Quit', 50, 20, (200, 0, 0), colour=(255, 0, 50), font_colour=(255, 220, 220), width = 240, height = 150)
 
         #next widgets
         next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0))
         next_back = Button((60, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
 
         #list of screens and their widgets
-        self.screens = {'title':{'begin':title_begin, 'rainbow':title_rainbow},
+        self.screens = {'title':{'play':title_play, 'quit':title_quit},
                         'next':{'rart':next_rart, 'back':next_back}}
 
     def switchScreen(self, screen):
@@ -155,21 +162,17 @@ while True:
 
     #title screen loop
     if screen.current_screen == 'title':
-        print(screen.getWidget('title', 'rainbow').getPixel((0, 0)))
-        if mouse.click(screen.getWidget('title', 'begin')):
+        if mouse.click(screen.getWidget('title', 'play')):
             screen.next()
+        elif mouse.click(screen.getWidget('title', 'quit')):
+            pygame.quit()
+            quit()
 
     #next screen loop
     elif screen.current_screen == 'next':
         if mouse.click(screen.getWidget('next', 'rart')):
             print('Rart!')
         elif mouse.click(screen.getWidget('next', 'back')):
-            dimensions = screen.getWidget('title', 'rainbow').dimensions
-            for x in range(dimensions[0]):
-                for y in range(dimensions[1]):
-                    #screen.getWidget('title', 'rainbow').setPixel((x, y), (x*(255/dimensions[0]), y*(255/dimensions[1]), 0))
-                    screen.getWidget('title', 'rainbow').setPixel((x, y), (100, 0, 0))
-
             screen.title()
 
     pygame.display.update()
