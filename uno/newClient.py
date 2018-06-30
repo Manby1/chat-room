@@ -90,8 +90,10 @@ class Button:
 
 #GUI Entry Boxes
 class Entry:
-    def __init__(self, pos, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None):
+    def __init__(self, pos, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None, highlight_colour = (255, 255, 0)):
         self.colour = colour
+        self.highlighted = False
+        self.highlight_colour = highlight_colour
         self.border_size = border_size
         self.border_colour = border_colour
         self.font_colour = font_colour
@@ -112,6 +114,10 @@ class Entry:
         self.text_rect.center = (self.text_rect.center[0], pos[1])
         self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/100, 0)
 
+    def highlight(self, state):
+        self.highlighted = state
+        self.print()
+
     def newCharacter(self, char):
         if not char == None:
             self.raw_text += char
@@ -123,7 +129,11 @@ class Entry:
 
     def print(self):
         if not self.border_size == 0:
-            pygame.draw.rect(display, self.border_colour, self.rect)
+            if self.highlighted:
+                colour = self.highlight_colour
+            else:
+                colour = self.border_colour
+            pygame.draw.rect(display, colour, self.rect)
             pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
         else:
             pygame.draw.rect(display, self.colour, self.rect)
@@ -146,16 +156,17 @@ class Screen:
         play_join = Button((700, 400), 'Join', 55, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (0, 200, 0), width = 240, height = 150)
 
         #join widgets
-        join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600)
-        join_port = Entry((500, 400), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600)
+        join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
+        join_port = Entry((500, 400), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
+        join_join = Button((700, 550), 'Join', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
 
         #back
-        back = Button((70, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
+        back = Button((70, 50), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0))
 
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
                         'play':{'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'ip':join_ip, 'port':join_port, 'back':back}}
+                        'join':{'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -228,6 +239,10 @@ clock = pygame.time.Clock()
 
 while True:
     events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
 
     #title screen loop
     if screen.current_screen == 'title':
@@ -247,14 +262,23 @@ while True:
             screen.title()
 
     elif screen.current_screen == 'join':
-        if mouse.click(screen.getWidget('join', 'back')):
-            screen.play()
-        elif mouse.click(screen.getWidget('join', 'ip')):
+
+        if mouse.clickScreen():
+            if screen.using.__class__ == Entry:
+                screen.using.highlight(False)
+            screen.using = None
+
+        if mouse.click(screen.getWidget('join', 'ip')):
             screen.using = screen.getWidget('join', 'ip')
+            screen.getWidget('join', 'ip').highlight(True)
+
         elif mouse.click(screen.getWidget('join', 'port')):
             screen.using = screen.getWidget('join', 'port')
-        elif mouse.clickScreen():
-            screen.using = None
+            screen.getWidget('join', 'port').highlight(True)
+
+        if mouse.click(screen.getWidget('join', 'back')):
+            screen.play()
+
         if screen.using.__class__ == Entry:
             for event in events:
                 if event.type == pygame.KEYDOWN:
