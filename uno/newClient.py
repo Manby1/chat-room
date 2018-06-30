@@ -98,13 +98,14 @@ class Screen:
         title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(180, 180, 220), width = 240, height = 150)
         title_quit = Button((700, 600), 'Quit', 50, 20, (200, 0, 0), colour=(255, 0, 50), font_colour=(255, 220, 220), width = 240, height = 150)
 
-        #next widgets
-        next_rart = Button((500, 400), 'RART', 75, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0))
-        next_back = Button((60, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
+        #play widgets
+        play_host = Button((300, 400), 'Host', 55, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0), width = 240, height = 150)
+        play_join = Button((700, 400), 'Join', 55, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (0, 200, 0), width = 240, height = 150)
+        play_back = Button((70, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
 
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit},
-                        'next':{'rart':next_rart, 'back':next_back}}
+                        'play':{'host':play_host, 'join':play_join, 'back':play_back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -115,8 +116,8 @@ class Screen:
         display.fill((100, 255, 255))
         screen.print()
 
-    def next(self):
-        self.switchScreen('next')
+    def play(self):
+        self.switchScreen('play')
         display.fill((255, 0, 0))
         screen.print()
 
@@ -163,16 +164,18 @@ while True:
     #title screen loop
     if screen.current_screen == 'title':
         if mouse.click(screen.getWidget('title', 'play')):
-            screen.next()
+            screen.play()
         elif mouse.click(screen.getWidget('title', 'quit')):
             pygame.quit()
             quit()
 
     #next screen loop
-    elif screen.current_screen == 'next':
-        if mouse.click(screen.getWidget('next', 'rart')):
-            print('Rart!')
-        elif mouse.click(screen.getWidget('next', 'back')):
+    elif screen.current_screen == 'play':
+        if mouse.click(screen.getWidget('play', 'host')):
+            print('Host')
+        elif mouse.click(screen.getWidget('play', 'join')):
+            print('Join')
+        elif mouse.click(screen.getWidget('play', 'back')):
             screen.title()
 
     pygame.display.update()
