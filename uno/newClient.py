@@ -1,9 +1,15 @@
-import pygame, asyncio, socket
+import pygame, asyncio, socket, sys
 
 pygame.init()
 pygame.display.set_icon(pygame.image.load('icon.png'))
-pygame.display.set_caption('Uno!')
-display = pygame.display.set_mode((1000, 800))
+pygame.display.set_caption('Uno!'
+
+displayInfo = pygame.display.Info()
+res = (displayInfo.current_w, displayInfo.current_h)
+if res == (1280,800) and sys.platform == 'darwin':
+    display = pygame.display.set_mode((1000, 709))
+else:
+    display = pygame.display.set_mode((1000, 800))
 
 #Mouse Object
 class Mouse:
