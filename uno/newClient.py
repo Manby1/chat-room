@@ -57,6 +57,23 @@ class Mouse:
             self.is_dragging = None
         return False
 
+#GUI Text
+class Text:
+    def __init__(self, pos, text, font_size, font_colour = (0, 0, 0)):
+        self.formatted_font = pygame.font.Font('Login.ttf', font_size)
+        self.text = self.formatted_font.render(text, True, font_colour)
+        self.font_size = font_size
+
+        self.position(pos)
+    def position(self, pos):
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = pos
+        self.center = pos
+
+    def print(self):
+        display.blit(self.text, self.text_rect)
+
+
 #GUI Buttons
 class Button:
     def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None):
@@ -157,8 +174,10 @@ class Screen:
 
         #join widgets
         join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
-        join_port = Entry((500, 400), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
-        join_join = Button((700, 550), 'Join', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
+        join_port = Entry((500, 430), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600, highlight_colour=(70, 255, 255))
+        join_join = Button((700, 580), 'Join', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
+        join_ip_text = Text((500, 250), 'IP Address:', 30)
+        join_port_text = Text((500, 380), 'Port:', 30)
 
         #back
         back = Button((70, 50), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0))
@@ -166,7 +185,7 @@ class Screen:
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
                         'play':{'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
+                        'join':{'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -215,6 +234,7 @@ class Image:
 
     def print(self):
         display.blit(self.image, self.image_rect)
+
 
 pygame_keys = {pygame.K_0:'0', pygame.K_1:'1', pygame.K_2:'2', pygame.K_3:'3', pygame.K_4:'4', pygame.K_5:'5',
               pygame.K_6:'6', pygame.K_7:'7', pygame.K_8:'8', pygame.K_9:'9', pygame.K_a:'a', pygame.K_b:'b',
@@ -278,6 +298,9 @@ while True:
 
         if mouse.click(screen.getWidget('join', 'back')):
             screen.play()
+
+        elif mouse.click(screen.getWidget('join', 'join')):
+            print('Join')
 
         if screen.using.__class__ == Entry:
             for event in events:
