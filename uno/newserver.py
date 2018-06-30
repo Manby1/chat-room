@@ -68,6 +68,8 @@ class Server:
                 self.clients.remove(current_client)
                 output = '{} has left...'.format(current_client.name)
                 self.sendToAll('S',output)
+                
+            await asyncio.sleep(0.1)
 
     async def serverLoop(self, max_users):
         self.socket.bind((self.IP_address, self.Port))
