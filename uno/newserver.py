@@ -90,8 +90,8 @@ if __name__ == '__main__':
     #automatic connection via file with details
     try:
         with open('server.txt') as f:
-            data = f.read()
-        IP_address, Port = data.split('\n')
+            data = f.read().split('\n')
+        IP_address, Port = data.split[0],data.split[1]
         Port = int(Port)
     except:
         print('Error reading server file. Please input manually.')
