@@ -1,0 +1,5 @@
+import socket, json
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(('localhost',PORT))
+message = bytes(json.dumps(('CODE','MESSAGE'))+'\uFFFF','utf-8')
+client.send(message)
