@@ -2,7 +2,7 @@ import pygame, asyncio, socket, sys
 
 pygame.init()
 pygame.display.set_icon(pygame.image.load('icon.png'))
-pygame.display.set_caption('Uno!'
+pygame.display.set_caption('Uno!')
 
 displayInfo = pygame.display.Info()
 res = (displayInfo.current_w, displayInfo.current_h)
