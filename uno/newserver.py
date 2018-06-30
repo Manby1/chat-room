@@ -91,7 +91,7 @@ if __name__ == '__main__':
     try:
         with open('server.txt') as f:
             data = f.read().split('\n')
-        IP_address, Port = data.split[0],data.split[1]
+        IP_address, Port = data[0],data[1]
         Port = int(Port)
     except:
         print('Error reading server file. Please input manually.')
