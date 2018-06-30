@@ -1,4 +1,4 @@
-import pygame, asyncio, socket, sys
+import pygame, asyncio, socket, sys, json
 
 pygame.init()
 pygame.display.set_icon(pygame.image.load('icon.png'))
@@ -356,7 +356,7 @@ while True:
 
         elif mouse.click(screen.getWidget('name', 'go')):
             name = screen.getWidget('name', 'name').raw_text
-            client.send(bytes(name, 'utf-8'))
+            client.send(bytes(json.dumps(('N', name)), 'utf-8'))
 
 
     if screen.using.__class__ == Entry:
