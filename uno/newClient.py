@@ -177,7 +177,7 @@ class Screen:
         title_splash = Image('splash.png', (500, 250))
 
         #play widgets
-        play_title = Text((500, 70), 'Play Uno!', 80, font_colour=(20, 20, 140))
+        play_title = Text((500, 70), 'Play Uno!', 80, font_colour=(70, 200, 200))
         play_host = Button((300, 400), 'Host', 55, colour=(140, 25, 240), font_colour=(255, 255, 255), border_size=30, border_colour=(110, 5, 200), width = 240, height = 150)
         play_join = Button((700, 400), 'Join', 55, colour=(255, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (200, 200, 0), width = 240, height = 150)
 
@@ -216,7 +216,7 @@ class Screen:
 
     def play(self):
         self.switchScreen('play')
-        display.fill((60, 60, 255))
+        display.fill((100, 255, 255))
         screen.print()
 
     def join(self):
@@ -351,7 +351,7 @@ while True:
             screen.getWidget('name', 'name').highlight(True)
 
         if mouse.click(screen.getWidget('name', 'back')):
-            client.detach()
+            client.close()
             screen.join()
 
         elif mouse.click(screen.getWidget('name', 'go')):
