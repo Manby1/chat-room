@@ -88,11 +88,43 @@ class Button:
             pygame.draw.rect(display, self.colour, self.rect)
         display.blit(self.text, self.text_rect)
 
-#screen
+#GUI Entry Boxes
+class Entry:
+    def __init__(self, pos, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None):
+        self.colour = colour
+        self.border_size = border_size
+        self.border_colour = border_colour
+        self.formatted_font = pygame.font.Font('Login.ttf', font_size)
+        self.raw_text = 'werf'
+        self.text = self.formatted_font.render('h', True, font_colour)
+        self.font_size = font_size
+        self.width = width
+        self.height = height
+
+        self.position(pos)
+    def position(self, pos):
+        self.center = pos
+        self.text_rect = self.text.get_rect()
+        if self.height == None:
+            self.height = self.text_rect[3] + self.font_size * 0.8
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), round(self.width), round(self.height))
+        self.text_rect.center = (self.text_rect.center[0], pos[1])
+        self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/100, 0)
+
+    def print(self):
+        if not self.border_size == 0:
+            pygame.draw.rect(display, self.border_colour, self.rect)
+            pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
+        else:
+            pygame.draw.rect(display, self.colour, self.rect)
+        display.blit(self.text, self.text_rect)#(self.rect[0]+self.border_size+self.width/100, self.center[1]))
+
+#Screen
 class Screen:
     def __init__(self):
         self.currentScreen = None
         self.active_widgets = None
+        self.using = None
 
         #title widgets
         title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(180, 180, 220), width = 240, height = 150)
@@ -103,13 +135,16 @@ class Screen:
         play_host = Button((300, 400), 'Host', 55, colour=(0, 0, 0), font_colour=(255, 255, 255), border_size=30, border_colour=(50, 0, 0), width = 240, height = 150)
         play_join = Button((700, 400), 'Join', 55, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=30, border_colour = (0, 200, 0), width = 240, height = 150)
 
+        #join widgets
+        join_ip = Entry((500, 300), 40, 5, (0, 0, 0), (255, 255, 255), (0, 0, 0), 600)
+
         #back
         back = Button((70, 50), 'Back', 20, colour=(0, 0, 0), font_colour=(255, 255, 255))
 
         #list of screens and their widgets
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
                         'play':{'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'back':back}}
+                        'join':{'ip':join_ip, 'back':back}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -198,11 +233,17 @@ while True:
             screen.title()
 
     elif screen.current_screen == 'join':
-        for event in events:
-            if event.type == pygame.KEYDOWN and event.key in pygameKeys:
-                print(pygameKeys[event.key])
         if mouse.click(screen.getWidget('join', 'back')):
             screen.play()
+        elif mouse.click(screen.getWidget('join', 'ip')):
+            screen.using = screen.getWidget('join', 'ip')
+        elif mouse.clickScreen():
+            screen.using = None
+        if screen.using == screen.getWidget('join', 'ip'):
+            for event in events:
+                if event.type == pygame.KEYDOWN and event.key in pygameKeys:
+                    print(pygameKeys[event.key])
+
 
     pygame.display.update()
     mouse.update()
