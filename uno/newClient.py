@@ -334,9 +334,9 @@ while True:
         elif mouse.click(screen.getWidget('join', 'auto')):
             #automatic connection
             with open('server.txt') as f:
-                data = f.read()
-                IP_Address = data[0:13]
-                Port = int(data[14:17])
+                data = f.read().split('\n')
+                IP_Address = data[0]
+                Port = int(data[1])
             client.connect((IP_Address, Port))
             screen.name()
 
