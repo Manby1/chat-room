@@ -299,6 +299,11 @@ class Screen:
         self.active_widgets = self.screens[screen]
         self.current_screen = screen
 
+    def dim(self):
+        rect = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
+        rect.fill((0, 0, 0, 120))
+        display.blit(rect, (0, 0))
+
     def title(self):
         self.switchScreen('title')
         display.fill((100, 255, 255))
@@ -316,6 +321,7 @@ class Screen:
             screen.print()
         elif phase == 1:
             self.phase = 1
+            self.dim()
             screen.print()
 
     def name(self):
@@ -330,6 +336,7 @@ class Screen:
             screen.print()
         elif phase == 1:
             self.phase = 1
+            self.dim()
             screen.print()
 
     def print(self):
