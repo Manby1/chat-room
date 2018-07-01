@@ -454,25 +454,27 @@ while True:
                 screen.play()
 
             elif mouse.click(screen.getWidget('join', 'join')):
-                IP_Address = screen.getWidget('join', 'ip').raw_text
-                Port = int(screen.getWidget('join', 'port').raw_text)
                 try:
+                    IP_Address = screen.getWidget('join', 'ip').raw_text
+                    Port = int(screen.getWidget('join', 'port').raw_text)
                     client.connect((IP_Address, Port))
                     screen.name()
-                except ConnectionRefusedError:
+                except Exception as e:
                     screen.join(1)
+                    print(e)
 
             elif mouse.click(screen.getWidget('join', 'auto')):
                 #automatic connection
-                with open('server.txt') as f:
-                    data = f.read().split('\n')
-                    IP_Address = data[0]
-                    Port = int(data[1])
                 try:
-                    client.connect((IP_Address, Port))
-                    screen.name()
-                except ConnectionRefusedError:
+                    with open('server.txt') as f:
+                        data = f.read().split('\n')
+                        IP_Address = data[0]
+                        Port = int(data[1])
+                        client.connect((IP_Address, Port))
+                        screen.name()
+                except Exception as e:
                     screen.join(1)
+                    print(e)
 
         elif screen.phase == 1:
             if mouse.click(screen.getWidget('join', 'ok')):
