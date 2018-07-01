@@ -49,15 +49,14 @@ class Mouse:
             return True
         return False
 
-    def holding(self, obj):
+    def holding(self, obj, button):
         button = self.buttons[button]
         if self.hover(obj) and self.pressed[button]:
                 return True
         return False
 
-    #@MANBY1 - I don't think this function will work because the holding method needs a button parameter
     def dragging(self, obj):
-        if self.click(obj, 'left') and self.holding(obj) and self.is_dragging == None:
+        if self.click(obj, 'left') and self.holding(obj, 'left') and self.is_dragging == None:
             self.is_dragging = obj
             self.drag_offset = (obj.center[0] - self.pos[0], obj.center[1] - self.pos[1])
             return True
@@ -198,6 +197,10 @@ class Screen:
         name_name_text = Text((500, 350), 'Name:', 30)
         name_go = Button((500, 580), 'GO!', 35, colour=(0, 255, 0), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 200, 0))
 
+        #lobby widgets
+        lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
+        lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
+
         #back
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
@@ -205,7 +208,8 @@ class Screen:
         self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
                         'play':{'title':play_title, 'host':play_host, 'join':play_join, 'back':back},
                         'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back, 'auto':join_auto},
-                        'name':{'title':name_title, 'name_text':name_name_text, 'name':name_name, 'go':name_go, 'back':back}}
+                        'name':{'title':name_title, 'name_text':name_name_text, 'name':name_name, 'go':name_go, 'back':back},
+                        'lobby':{'leave':lobby_leave, 'title':lobby_title}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -229,6 +233,11 @@ class Screen:
     def name(self):
         self.switchScreen('name')
         display.fill((255, 255, 0))
+        screen.print()
+
+    def lobby(self):
+        self.switchScreen('lobby')
+        display.fill((255, 140, 140))
         screen.print()
 
     def print(self):
@@ -384,6 +393,12 @@ while True:
             #pygame.image.tostring simply cannot be sent. it sucks.
             #game crashes. stops responding.
             #client.send('I', str(image_string[2:-1]))
+            screen.lobby()
+
+    elif screen.current_screen == 'lobby':
+        if mouse.click(screen.getWidget('lobby', 'leave')):
+            client.close()
+            screen.join()
 
 
     if screen.using.__class__ == Entry:
