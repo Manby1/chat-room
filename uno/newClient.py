@@ -609,7 +609,7 @@ async def mainLoop():
                         at_line.append(compress(profile_image.get_at((x,y)).normalize()))
                     string_profile.append(at_line)
                     at_line = []
-                client.send('I', string_profile)
+                client.send('I', string_profile, raw=True)
                 print("Sent {}!".format(string_profile))
 
                 screen.lobby(0)
@@ -641,7 +641,7 @@ async def mainLoop():
         clock.tick(100)
         pygame.display.update()
         mouse.update()
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 loop = asyncio.get_event_loop()
 loop.create_task(mainLoop())
