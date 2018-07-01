@@ -525,7 +525,7 @@ while True:
 
     elif screen.current_screen == 'lobby':
         if screen.phase == 0:
-            screen.getWidget('lobby', 'player1').setText('Guy is gay')
+            screen.getWidget('lobby', 'player1').setText('no u')
             if mouse.click(screen.getWidget('lobby', 'leave')):
                 screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
                 screen.lobby(1)
