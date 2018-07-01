@@ -224,8 +224,8 @@ class Screen:
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
         lobby_confirm = Box((500, 400), 400, 200, 10, (200, 0, 0), (255, 0, 50))
         lobby_usure = Text((500, 360), 'Are you sure?', 40)
-        lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=150, height=80)
-        lobby_no = Button((600, 440), 'No', 30, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=150, height=80)
+        lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 255, 255), font_colour=(0, 255, 0), border_size=5, border_colour=(0, 0, 0), width=150, height=80)
+        lobby_no = Button((600, 440), 'No', 30, colour=(255, 255, 255), font_colour=(255, 0, 0), border_size=5, border_colour=(0, 0, 0), width=150, height=80)
 
         #universal
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
