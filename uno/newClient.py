@@ -201,7 +201,7 @@ class Screen:
         lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
 
-        #back
+        #universal
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
         #list of screens and their widgets
@@ -209,7 +209,7 @@ class Screen:
                         'play':{'title':play_title, 'host':play_host, 'join':play_join, 'back':back},
                         'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back, 'auto':join_auto},
                         'name':{'title':name_title, 'name_text':name_name_text, 'name':name_name, 'go':name_go, 'back':back},
-                        'lobby':{'leave':lobby_leave, 'title':lobby_title}}
+                        'lobby':{'leave':lobby_leave, 'title':lobby_title,}}
 
     def switchScreen(self, screen):
         self.active_widgets = self.screens[screen]
@@ -235,10 +235,13 @@ class Screen:
         display.fill((255, 255, 0))
         screen.print()
 
-    def lobby(self):
-        self.switchScreen('lobby')
-        display.fill((255, 140, 140))
-        screen.print()
+    def lobby(self, phase):
+        if phase == 0:
+            self.switchScreen('lobby')
+            display.fill((255, 140, 140))
+            screen.print()
+        elif phase == 1:
+            print('Ok')
 
     def print(self):
         for widget in self.active_widgets.values():
@@ -249,15 +252,19 @@ class Screen:
 
 #Images
 class Image:
-    def __init__(self, filename, pos):
+    def __init__(self, filename, pos, ignore_center = False):
         self.image = pygame.image.load(filename)
         self.dimensions = self.image.get_size()
-        self.position(pos)
+        self.ignore_center = ignore_center
+        self.position(pos, ignore_center)
 
-    def position(self, pos):
-        self.image_rect = self.image.get_rect()
-        self.image_rect.center = pos
-        self.center = pos
+    def position(self, pos, ignore_center):
+        if ignore_center:
+            self.image_rect = (pos[0], pos[1], self.image.get_width(), self.image.get_height())
+        else:
+            self.image_rect = self.image.get_rect()
+            self.image_rect.center = pos
+            self.center = pos
 
     def getPixel(self, coords):
         pixel = self.image.get_at(coords)
@@ -393,12 +400,13 @@ while True:
             #pygame.image.tostring simply cannot be sent. it sucks.
             #game crashes. stops responding.
             #client.send('I', str(image_string[2:-1]))
-            screen.lobby()
+            screen.lobby(0)
 
     elif screen.current_screen == 'lobby':
         if mouse.click(screen.getWidget('lobby', 'leave')):
             client.close()
-            screen.join()
+            screen.lobby(1)
+            #screen.join()
 
 
     if screen.using.__class__ == Entry:
