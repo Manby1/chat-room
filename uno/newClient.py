@@ -37,6 +37,7 @@ class Mouse:
                 return True
         return False
 
+    #Couldn't this be an option for click instead?
     def clickScreen(self, button='left'):
         button = self.buttons[button]
         if not self.prev_pressed[button] and self.pressed[button]:
@@ -54,6 +55,7 @@ class Mouse:
                 return True
         return False
 
+    #@MANBY1 - I don't think this function will work because the holding method needs a button parameter
     def dragging(self, obj):
         if self.click(obj, 'left') and self.holding(obj) and self.is_dragging == None:
             self.is_dragging = obj
@@ -258,6 +260,23 @@ class Image:
     def print(self):
         display.blit(self.image, self.image_rect)
 
+class Client(socket.socket):
+    def __init__(self):
+        super().__init__(socket.AF_INET, socket.SOCK_STREAM)
+        self.ID = None
+        self.name = None
+        self.avatar = None
+
+    def send(self, message_type, message):
+        super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8'))
+
+    def receive(self):
+        try:
+            messages = self.recv(512).decode().split('\uFFFF')
+            messages = [json.loads(i) for i in messages[:-1]]
+            return messages
+        except socket.timeout:
+            return None
 
 pygame_keys = {pygame.K_0:'0', pygame.K_1:'1', pygame.K_2:'2', pygame.K_3:'3', pygame.K_4:'4', pygame.K_5:'5',
               pygame.K_6:'6', pygame.K_7:'7', pygame.K_8:'8', pygame.K_9:'9', pygame.K_a:'a', pygame.K_b:'b',
@@ -281,7 +300,7 @@ screen.title()
 clock = pygame.time.Clock()
 
 #Client Socket
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client = Client()
 
 while True:
     events = pygame.event.get()
@@ -356,7 +375,7 @@ while True:
 
         elif mouse.click(screen.getWidget('name', 'go')):
             name = screen.getWidget('name', 'name').raw_text
-            client.send(bytes(json.dumps(('N', name))+'\uFFFF', 'utf-8'))
+            client.send('N', name)
 
 
     if screen.using.__class__ == Entry:

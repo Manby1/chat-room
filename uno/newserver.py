@@ -23,9 +23,9 @@ class Client:
             return None
 
 
-class Server:
+class Server(socket.socket):
     def __init__(self, IP_address, Port):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        super().__init__(socket.AF_INET, socket.SOCK_STREAM)
         self.IP_address = IP_address
         self.Port = Port
         self.clients = []
@@ -77,14 +77,14 @@ class Server:
             await asyncio.sleep(0.1)
 
     async def serverLoop(self, max_users):
-        self.socket.bind((self.IP_address, self.Port))
-        self.socket.listen(max_users)
-        self.socket.settimeout(1)
+        self.bind((self.IP_address, self.Port))
+        self.listen(max_users)
+        self.settimeout(1)
         print("I have been awakened. I can hear the sounds of the wind...")
 
         while True:
             try:
-                client_socket, address = self.socket.accept()
+                client_socket, address = self.accept()
                 print('W-we have a new client!! I really look forward to working with them...')
                 asyncio.ensure_future(self.clientLoop(client_socket, address))
 
