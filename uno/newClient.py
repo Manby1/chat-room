@@ -383,7 +383,7 @@ while True:
             image_string = pygame.image.tostring(profile_image, 'RGB')
             #pygame.image.tostring simply cannot be sent. it sucks.
             #game crashes. stops responding.
-            client.send('I', str(image_string[2:-1]))
+            #client.send('I', str(image_string[2:-1]))
 
 
     if screen.using.__class__ == Entry:
