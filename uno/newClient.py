@@ -198,9 +198,17 @@ class PlayerInfo:
         self.font_size = 30
         self.width = 650
         self.height = 60
-        self.img = Image('profile.png', (0, 0))
 
+        #must position objexts first as attributes must be referrenced by image to position itself
+        self.center = pos
+        self.text_rect = self.text.get_rect()
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), round(self.width),round(self.height))
+        self.text_rect.center = (self.text_rect.center[0], pos[1])
+        self.text_rect = self.text_rect.move(self.rect[0] + self.border_size + self.width / 14, 0)
+
+        self.setImage('profile.png')
         self.position(pos)
+
     def position(self, pos):
         self.center = pos
         self.text_rect = self.text.get_rect()
@@ -208,6 +216,10 @@ class PlayerInfo:
         self.text_rect.center = (self.text_rect.center[0], pos[1])
         self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/14, 0)
         self.img.position((self.rect[0]+self.border_size+self.width/30, pos[1]))
+
+    def setImage(self, filename):
+        self.img = Image(filename, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
+        self.print()
 
     def setText(self, text):
         self.raw_text = text
@@ -501,131 +513,136 @@ clock = pygame.time.Clock()
 #Client Socket
 client = Client()
 
-while True:
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
+async def mainLoop():
+    while True:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
 
-    #title screen loop
-    if screen.current_screen == 'title':
-        if mouse.click(screen.getWidget('title', 'play')):
-            screen.play()
-        elif mouse.click(screen.getWidget('title', 'quit')):
-            pygame.quit()
-            quit()
+        #title screen loop
+        if screen.current_screen == 'title':
+            if mouse.click(screen.getWidget('title', 'play')):
+                screen.play()
+            elif mouse.click(screen.getWidget('title', 'quit')):
+                pygame.quit()
+                quit()
 
-    #play screen loop
-    elif screen.current_screen == 'play':
-        if mouse.click(screen.getWidget('play', 'host')):
-            print('Host')
-        elif mouse.click(screen.getWidget('play', 'join')):
-            screen.join()
-        elif mouse.click(screen.getWidget('play', 'back')):
-            screen.title()
+        #play screen loop
+        elif screen.current_screen == 'play':
+            if mouse.click(screen.getWidget('play', 'host')):
+                print('Host')
+            elif mouse.click(screen.getWidget('play', 'join')):
+                screen.join()
+            elif mouse.click(screen.getWidget('play', 'back')):
+                screen.title()
 
-    elif screen.current_screen == 'join':
-        if screen.phase == 0:
+        elif screen.current_screen == 'join':
+            if screen.phase == 0:
+                if mouse.clickScreen():
+                    if screen.using.__class__ == Entry:
+                        screen.using.highlight(False)
+                    screen.using = None
+
+                if mouse.click(screen.getWidget('join', 'ip')):
+                    screen.using = screen.getWidget('join', 'ip')
+                    screen.getWidget('join', 'ip').highlight(True)
+
+                elif mouse.click(screen.getWidget('join', 'port')):
+                    screen.using = screen.getWidget('join', 'port')
+                    screen.getWidget('join', 'port').highlight(True)
+
+                if mouse.click(screen.getWidget('join', 'back')):
+                    screen.play()
+
+                elif mouse.click(screen.getWidget('join', 'join')):
+                    try:
+                        IP_Address = screen.getWidget('join', 'ip').raw_text
+                        Port = int(screen.getWidget('join', 'port').raw_text)
+                        client.connect((IP_Address, Port))
+                        screen.name()
+                    except Exception as e:
+                        screen.join(1)
+                        print(e)
+
+                elif mouse.click(screen.getWidget('join', 'auto')):
+                    #automatic connection
+                    try:
+                        with open('server.txt') as f:
+                            data = f.read().split('\n')
+                            IP_Address = data[0]
+                            Port = int(data[1])
+                            client.connect((IP_Address, Port))
+                            screen.name()
+                    except Exception as e:
+                        screen.join(1)
+                        print(e)
+
+            elif screen.phase == 1:
+                if mouse.click(screen.getWidget('join', 'ok')):
+                    screen.join(0)
+
+        elif screen.current_screen == 'name':
             if mouse.clickScreen():
                 if screen.using.__class__ == Entry:
                     screen.using.highlight(False)
                 screen.using = None
 
-            if mouse.click(screen.getWidget('join', 'ip')):
-                screen.using = screen.getWidget('join', 'ip')
-                screen.getWidget('join', 'ip').highlight(True)
+            if mouse.click(screen.getWidget('name', 'name')):
+                screen.using = screen.getWidget('name', 'name')
+                screen.getWidget('name', 'name').highlight(True)
 
-            elif mouse.click(screen.getWidget('join', 'port')):
-                screen.using = screen.getWidget('join', 'port')
-                screen.getWidget('join', 'port').highlight(True)
-
-            if mouse.click(screen.getWidget('join', 'back')):
-                screen.play()
-
-            elif mouse.click(screen.getWidget('join', 'join')):
-                try:
-                    IP_Address = screen.getWidget('join', 'ip').raw_text
-                    Port = int(screen.getWidget('join', 'port').raw_text)
-                    client.connect((IP_Address, Port))
-                    screen.name()
-                except Exception as e:
-                    screen.join(1)
-                    print(e)
-
-            elif mouse.click(screen.getWidget('join', 'auto')):
-                #automatic connection
-                try:
-                    with open('server.txt') as f:
-                        data = f.read().split('\n')
-                        IP_Address = data[0]
-                        Port = int(data[1])
-                        client.connect((IP_Address, Port))
-                        screen.name()
-                except Exception as e:
-                    screen.join(1)
-                    print(e)
-
-        elif screen.phase == 1:
-            if mouse.click(screen.getWidget('join', 'ok')):
-                screen.join(0)
-
-    elif screen.current_screen == 'name':
-        if mouse.clickScreen():
-            if screen.using.__class__ == Entry:
-                screen.using.highlight(False)
-            screen.using = None
-
-        if mouse.click(screen.getWidget('name', 'name')):
-            screen.using = screen.getWidget('name', 'name')
-            screen.getWidget('name', 'name').highlight(True)
-
-        if mouse.click(screen.getWidget('name', 'back')):
-            client.close()
-            screen.join()
-
-        elif mouse.click(screen.getWidget('name', 'go')):
-            name = screen.getWidget('name', 'name').raw_text
-            client.send('N', name)
-            profile_image = pygame.image.load('profile.png')
-            profile_image = pygame.transform.scale(profile_image, (32,32))
-            string_profile = []
-            at_line = []
-            for x in range(32):
-                for y in range(32):
-                    at_line.append(compress(profile_image.get_at((x,y)).normalize()))
-                string_profile.append(at_line)
-                at_line = []
-            client.send('I', string_profile)
-            print("Sent {}!".format(string_profile))
-
-            screen.lobby(0)
-
-    elif screen.current_screen == 'lobby':
-        if screen.phase == 0:
-            screen.getWidget('lobby', 'player1').setText('no u')
-            if mouse.click(screen.getWidget('lobby', 'leave')):
-                screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
-                screen.lobby(1)
-
-        elif screen.phase == 1:
-            if mouse.click(screen.getWidget('lobby', 'yes')):
+            if mouse.click(screen.getWidget('name', 'back')):
                 client.close()
                 screen.join()
-            elif mouse.click(screen.getWidget('lobby', 'no')):
-                screen.getWidget('lobby', 'player1').setColour((255, 0, 0), (0, 255, 255), (0, 255, 0))
+
+            elif mouse.click(screen.getWidget('name', 'go')):
+                name = screen.getWidget('name', 'name').raw_text
+                client.send('N', name)
+                profile_image = pygame.image.load('profile.png')
+                profile_image = pygame.transform.scale(profile_image, (32,32))
+                string_profile = []
+                at_line = []
+                for x in range(32):
+                    for y in range(32):
+                        at_line.append(compress(profile_image.get_at((x,y)).normalize()))
+                    string_profile.append(at_line)
+                    at_line = []
+                client.send('I', string_profile)
+                print("Sent {}!".format(string_profile))
+
                 screen.lobby(0)
 
-    if screen.using.__class__ == Entry:
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key in pygame_keys:
-                    screen.using.newCharacter(pygame_keys[event.key])
-                elif event.key == pygame.K_BACKSPACE:
-                    screen.using.newCharacter(None)
+        elif screen.current_screen == 'lobby':
+            if screen.phase == 0:
+                screen.getWidget('lobby', 'player1').setText('no u')
+                if mouse.click(screen.getWidget('lobby', 'leave')):
+                    screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
+                    screen.lobby(1)
+
+            elif screen.phase == 1:
+                if mouse.click(screen.getWidget('lobby', 'yes')):
+                    client.close()
+                    screen.join()
+                elif mouse.click(screen.getWidget('lobby', 'no')):
+                    screen.getWidget('lobby', 'player1').setColour((255, 0, 0), (0, 255, 255), (0, 255, 0))
+                    screen.lobby(0)
+
+        if screen.using.__class__ == Entry:
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key in pygame_keys:
+                        screen.using.newCharacter(pygame_keys[event.key])
+                    elif event.key == pygame.K_BACKSPACE:
+                        screen.using.newCharacter(None)
 
 
-    clock.tick(100)
-    pygame.display.update()
-    mouse.update()
-    await asyncio.sleep(0.1)
+        clock.tick(100)
+        pygame.display.update()
+        mouse.update()
+        await asyncio.sleep(0.1)
+
+loop = asyncio.get_event_loop()
+loop.create_task(mainLoop())
+loop.run_forever()
