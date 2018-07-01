@@ -2,6 +2,7 @@
 __pycache__/
 server.txt
 .vscode
+profile.png
 
 *.py[cod]
 *$py.class
