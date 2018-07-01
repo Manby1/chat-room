@@ -206,7 +206,7 @@ class PlayerInfo:
         self.text_rect.center = (self.text_rect.center[0], pos[1])
         self.text_rect = self.text_rect.move(self.rect[0] + self.border_size + self.width / 14, 0)
 
-        self.setImage('profile.png')
+        self.setImage(pygame.image.load('profile.png'))
         self.position(pos)
 
     def position(self, pos):
@@ -217,8 +217,8 @@ class PlayerInfo:
         self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/14, 0)
         self.img.position((self.rect[0]+self.border_size+self.width/30, pos[1]))
 
-    def setImage(self, filename):
-        self.img = Image(filename, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
+    def setImage(self, image):
+        self.img = Image(image, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
         self.print()
 
     def setText(self, text):
@@ -251,7 +251,7 @@ class Screen:
         #title widgets
         title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(220, 220, 255), width = 240, height = 150)
         title_quit = Button((700, 600), 'Quit', 50, 20, (200, 0, 0), colour=(255, 0, 50), font_colour=(255, 220, 220), width = 240, height = 150)
-        title_splash = Image('splash.png', (500, 250))
+        title_splash = Image(pygame.image.load('splash.png'), (500, 250))
 
         #play widgets
         play_title = Text((500, 70), 'Play Uno!', 80, font_colour=(70, 200, 200))
@@ -363,8 +363,8 @@ class Screen:
 
 #Images
 class Image:
-    def __init__(self, filename, pos, ignore_center = False):
-        self.image = pygame.image.load(filename)
+    def __init__(self, image, pos, ignore_center = False):
+        self.image = image
         self.dimensions = self.image.get_size()
         self.ignore_center = ignore_center
         self.position(pos)
