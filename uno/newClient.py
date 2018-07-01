@@ -183,7 +183,47 @@ class Entry:
             pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
         else:
             pygame.draw.rect(display, self.colour, self.rect)
-        display.blit(self.text, self.text_rect)#(self.rect[0]+self.border_size+self.width/100, self.center[1]))
+        display.blit(self.text, self.text_rect)
+
+#Player Info Box
+class PlayerInfo:
+    def __init__(self, pos, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
+        self.colour = colour
+        self.border_size = 10
+        self.border_colour = border_colour
+        self.font_colour = font_colour
+        self.formatted_font = pygame.font.Font('Login.ttf', 30)
+        self.raw_text = 'Player'
+        self.text = self.formatted_font.render(self.raw_text, True, font_colour)
+        self.font_size = 30
+        self.width = 650
+        self.height = 60
+
+        self.position(pos)
+    def position(self, pos):
+        self.center = pos
+        self.text_rect = self.text.get_rect()
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), round(self.width), round(self.height))
+        self.text_rect.center = (self.text_rect.center[0], pos[1])
+        self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/100, 0)
+
+    def setText(self, text):
+        self.raw_text = text
+        self.text = self.formatted_font.render(self.raw_text, True, self.font_colour)
+        self.print()
+
+    def setColour(self, font_colour, colour, border_colour):
+        self.font_colour = font_colour
+        self.text = self.formatted_font.render(self.raw_text, True, font_colour)
+        self.colour = colour
+        self.border_colour = border_colour
+        self.print()
+
+    def print(self):
+        pygame.draw.rect(display, self.border_colour, self.rect)
+        pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
+        display.blit(self.text, self.text_rect)
+
 
 #Screen
 class Screen:
@@ -222,6 +262,7 @@ class Screen:
         #lobby widgets
         lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
+        lobby_player1 = PlayerInfo((340, 320), (0, 0, 0), (0, 255, 0))
         lobby_confirm = Box((500, 400), 400, 200, 10, (200, 0, 0), (255, 0, 50))
         lobby_usure = Text((500, 360), 'Are you sure?', 40)
         lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 255, 255), font_colour=(0, 255, 0), border_size=5, border_colour=(0, 0, 0), width=150, height=80)
@@ -231,7 +272,8 @@ class Screen:
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
         #list of screens and their widgets
-        self.screens = {'title':{'play':(title_play, 0), 'quit':(title_quit, 0), 'splash':(title_splash, 0)},
+        self.screens = {
+                        'title':{'play':(title_play, 0), 'quit':(title_quit, 0), 'splash':(title_splash, 0)},
 
                         'play':{'title':(play_title, 0), 'host':(play_host, 0), 'join':(play_join, 0), 'back':(back, 0)},
 
@@ -242,8 +284,10 @@ class Screen:
                         'name':{'title':(name_title, 0), 'name_text':(name_name_text, 0), 'name':(name_name, 0),
                                 'go':(name_go, 0), 'back':(back, 0)},
 
-                        'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'confirm':(lobby_confirm, 1),
-                                 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1), 'no':(lobby_no, 1)}}
+                        'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'player1':(lobby_player1, 0),
+                                 'confirm':(lobby_confirm, 1), 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1),
+                                 'no':(lobby_no, 1)}
+                        }
 
 
     def switchScreen(self, screen):
@@ -442,14 +486,17 @@ while True:
 
     elif screen.current_screen == 'lobby':
         if screen.phase == 0:
+            screen.getWidget('lobby', 'player1').setText('Guy is gay')
             if mouse.click(screen.getWidget('lobby', 'leave')):
+                screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
                 screen.lobby(1)
-                #screen.join()
+
         elif screen.phase == 1:
             if mouse.click(screen.getWidget('lobby', 'yes')):
                 client.close()
                 screen.join()
             elif mouse.click(screen.getWidget('lobby', 'no')):
+                screen.getWidget('lobby', 'player1').setColour((255, 0, 0), (0, 255, 255), (0, 255, 0))
                 screen.lobby(0)
 
     if screen.using.__class__ == Entry:
