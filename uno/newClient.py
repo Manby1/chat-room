@@ -183,7 +183,47 @@ class Entry:
             pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
         else:
             pygame.draw.rect(display, self.colour, self.rect)
-        display.blit(self.text, self.text_rect)#(self.rect[0]+self.border_size+self.width/100, self.center[1]))
+        display.blit(self.text, self.text_rect)
+
+#Player Info Box
+class PlayerInfo:
+    def __init__(self, pos, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
+        self.colour = colour
+        self.border_size = 10
+        self.border_colour = border_colour
+        self.font_colour = font_colour
+        self.formatted_font = pygame.font.Font('Login.ttf', 30)
+        self.raw_text = 'Player'
+        self.text = self.formatted_font.render(self.raw_text, True, font_colour)
+        self.font_size = 30
+        self.width = 650
+        self.height = 60
+
+        self.position(pos)
+    def position(self, pos):
+        self.center = pos
+        self.text_rect = self.text.get_rect()
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), round(self.width), round(self.height))
+        self.text_rect.center = (self.text_rect.center[0], pos[1])
+        self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/100, 0)
+
+    def setText(self, text):
+        self.raw_text = text
+        self.text = self.formatted_font.render(self.raw_text, True, self.font_colour)
+        self.print()
+
+    def setColour(self, font_colour, colour, border_colour):
+        self.font_colour = font_colour
+        self.text = self.formatted_font.render(self.raw_text, True, font_colour)
+        self.colour = colour
+        self.border_colour = border_colour
+        self.print()
+
+    def print(self):
+        pygame.draw.rect(display, self.border_colour, self.rect)
+        pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
+        display.blit(self.text, self.text_rect)
+
 
 #Screen
 class Screen:
@@ -212,6 +252,9 @@ class Screen:
         join_auto = Button((300, 580), 'Auto-Connect', 35, colour=(255, 255, 255), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 0, 0))
         join_ip_text = Text((500, 250), 'IP Address:', 30)
         join_port_text = Text((500, 380), 'Port:', 30)
+        join_fail = Box((500, 400), 500, 200, 10, (200, 0, 0), (255, 0, 50))
+        join_failmsg = Text((500, 360), "Could not Connect", 40)
+        join_ok = Button((500, 440), 'Ok', 30, colour=(180, 180, 180), font_colour=(50, 50, 50), border_size=5, border_colour=(100, 100, 100), width=150, height=80)
 
         #name widgets
         name_title = Text((500, 70), 'Connected!', 80, font_colour=(160, 160, 50))
@@ -222,6 +265,7 @@ class Screen:
         #lobby widgets
         lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
+        lobby_player1 = PlayerInfo((340, 320), (0, 0, 0), (0, 255, 0))
         lobby_confirm = Box((500, 400), 400, 200, 10, (200, 0, 0), (255, 0, 50))
         lobby_usure = Text((500, 360), 'Are you sure?', 40)
         lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 255, 255), font_colour=(0, 255, 0), border_size=5, border_colour=(0, 0, 0), width=150, height=80)
@@ -231,25 +275,34 @@ class Screen:
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
         #list of screens and their widgets
-        self.screens = {'title':{'play':(title_play, 0), 'quit':(title_quit, 0), 'splash':(title_splash, 0)},
+        self.screens = {
+                        'title':{'play':(title_play, 0), 'quit':(title_quit, 0), 'splash':(title_splash, 0)},
 
                         'play':{'title':(play_title, 0), 'host':(play_host, 0), 'join':(play_join, 0), 'back':(back, 0)},
 
                         'join':{'title':(join_title, 0), 'ip_text':(join_ip_text, 0), 'port_text':(join_port_text, 0),
                                 'ip':(join_ip, 0), 'port':(join_port, 0), 'join':(join_join, 0), 'back':(back, 0),
-                                'auto':(join_auto, 0)},
+                                'auto':(join_auto, 0), 'fail':(join_fail, 1), 'failmsg':(join_failmsg, 1),
+                                'ok':(join_ok, 1)},
 
                         'name':{'title':(name_title, 0), 'name_text':(name_name_text, 0), 'name':(name_name, 0),
                                 'go':(name_go, 0), 'back':(back, 0)},
 
-                        'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'confirm':(lobby_confirm, 1),
-                                 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1), 'no':(lobby_no, 1)}}
+                        'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'player1':(lobby_player1, 0),
+                                 'confirm':(lobby_confirm, 1), 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1),
+                                 'no':(lobby_no, 1)}
+                        }
 
 
     def switchScreen(self, screen):
         self.phase = 0
         self.active_widgets = self.screens[screen]
         self.current_screen = screen
+
+    def dim(self):
+        rect = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
+        rect.fill((0, 0, 0, 120))
+        display.blit(rect, (0, 0))
 
     def title(self):
         self.switchScreen('title')
@@ -261,25 +314,30 @@ class Screen:
         display.fill((100, 255, 255))
         screen.print()
 
-    def join(self):
-        self.switchScreen('join')
-        display.fill((255, 255, 0))
-        screen.print()
+    def join(self, phase = 0):
+        if phase == 0:
+            self.switchScreen('join')
+            display.fill((255, 255, 0))
+            screen.print()
+        elif phase == 1:
+            self.phase = 1
+            self.dim()
+            screen.print()
 
     def name(self):
         self.switchScreen('name')
         display.fill((255, 255, 0))
         screen.print()
 
-    def lobby(self, phase):
+    def lobby(self, phase = 0):
         if phase == 0:
             self.switchScreen('lobby')
             display.fill((255, 140, 140))
             screen.print()
         elif phase == 1:
             self.phase = 1
+            self.dim()
             screen.print()
-            print('Ok')
 
     def print(self):
         for widget in self.active_widgets.values():
@@ -390,37 +448,49 @@ while True:
             screen.title()
 
     elif screen.current_screen == 'join':
+        if screen.phase == 0:
+            if mouse.clickScreen():
+                if screen.using.__class__ == Entry:
+                    screen.using.highlight(False)
+                screen.using = None
 
-        if mouse.clickScreen():
-            if screen.using.__class__ == Entry:
-                screen.using.highlight(False)
-            screen.using = None
+            if mouse.click(screen.getWidget('join', 'ip')):
+                screen.using = screen.getWidget('join', 'ip')
+                screen.getWidget('join', 'ip').highlight(True)
 
-        if mouse.click(screen.getWidget('join', 'ip')):
-            screen.using = screen.getWidget('join', 'ip')
-            screen.getWidget('join', 'ip').highlight(True)
+            elif mouse.click(screen.getWidget('join', 'port')):
+                screen.using = screen.getWidget('join', 'port')
+                screen.getWidget('join', 'port').highlight(True)
 
-        elif mouse.click(screen.getWidget('join', 'port')):
-            screen.using = screen.getWidget('join', 'port')
-            screen.getWidget('join', 'port').highlight(True)
+            if mouse.click(screen.getWidget('join', 'back')):
+                screen.play()
 
-        if mouse.click(screen.getWidget('join', 'back')):
-            screen.play()
+            elif mouse.click(screen.getWidget('join', 'join')):
+                try:
+                    IP_Address = screen.getWidget('join', 'ip').raw_text
+                    Port = int(screen.getWidget('join', 'port').raw_text)
+                    client.connect((IP_Address, Port))
+                    screen.name()
+                except Exception as e:
+                    screen.join(1)
+                    print(e)
 
-        elif mouse.click(screen.getWidget('join', 'join')):
-            IP_Address = screen.getWidget('join', 'ip').raw_text
-            Port = int(screen.getWidget('join', 'port').raw_text)
-            client.connect((IP_Address, Port))
-            screen.name()
+            elif mouse.click(screen.getWidget('join', 'auto')):
+                #automatic connection
+                try:
+                    with open('server.txt') as f:
+                        data = f.read().split('\n')
+                        IP_Address = data[0]
+                        Port = int(data[1])
+                        client.connect((IP_Address, Port))
+                        screen.name()
+                except Exception as e:
+                    screen.join(1)
+                    print(e)
 
-        elif mouse.click(screen.getWidget('join', 'auto')):
-            #automatic connection
-            with open('server.txt') as f:
-                data = f.read().split('\n')
-                IP_Address = data[0]
-                Port = int(data[1])
-            client.connect((IP_Address, Port))
-            screen.name()
+        elif screen.phase == 1:
+            if mouse.click(screen.getWidget('join', 'ok')):
+                screen.join(0)
 
     elif screen.current_screen == 'name':
         if mouse.clickScreen():
@@ -455,14 +525,17 @@ while True:
 
     elif screen.current_screen == 'lobby':
         if screen.phase == 0:
+            screen.getWidget('lobby', 'player1').setText('Guy is gay')
             if mouse.click(screen.getWidget('lobby', 'leave')):
+                screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
                 screen.lobby(1)
-                #screen.join()
+
         elif screen.phase == 1:
             if mouse.click(screen.getWidget('lobby', 'yes')):
                 client.close()
                 screen.join()
             elif mouse.click(screen.getWidget('lobby', 'no')):
+                screen.getWidget('lobby', 'player1').setColour((255, 0, 0), (0, 255, 255), (0, 255, 0))
                 screen.lobby(0)
 
     if screen.using.__class__ == Entry:
