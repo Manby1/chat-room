@@ -198,6 +198,7 @@ class PlayerInfo:
         self.font_size = 30
         self.width = 650
         self.height = 60
+        self.img = Image('profile.png', (0, 0))
 
         self.position(pos)
     def position(self, pos):
@@ -205,7 +206,8 @@ class PlayerInfo:
         self.text_rect = self.text.get_rect()
         self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), round(self.width), round(self.height))
         self.text_rect.center = (self.text_rect.center[0], pos[1])
-        self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/100, 0)
+        self.text_rect = self.text_rect.move(self.rect[0]+self.border_size+self.width/14, 0)
+        self.img.position((self.rect[0]+self.border_size+self.width/30, pos[1]))
 
     def setText(self, text):
         self.raw_text = text
@@ -223,7 +225,7 @@ class PlayerInfo:
         pygame.draw.rect(display, self.border_colour, self.rect)
         pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
         display.blit(self.text, self.text_rect)
-
+        display.blit(self.img.image, self.img.image_rect)
 
 #Screen
 class Screen:
@@ -319,7 +321,7 @@ class Screen:
             self.switchScreen('join')
             display.fill((255, 255, 0))
             screen.print()
-        elif phase == 1:
+        elif phase == 1: 
             self.phase = 1
             self.dim()
             screen.print()
@@ -353,10 +355,10 @@ class Image:
         self.image = pygame.image.load(filename)
         self.dimensions = self.image.get_size()
         self.ignore_center = ignore_center
-        self.position(pos, ignore_center)
+        self.position(pos)
 
-    def position(self, pos, ignore_center):
-        if ignore_center:
+    def position(self, pos):
+        if self.ignore_center:
             self.image_rect = (pos[0], pos[1], self.image.get_width(), self.image.get_height())
         else:
             self.image_rect = self.image.get_rect()
