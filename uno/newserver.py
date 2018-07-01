@@ -17,6 +17,7 @@ class Client:
     def receive(self):
         try:
             messages = self.socket.recv(512).decode().split('\uFFFF')
+            print(messages)
             messages = [json.loads(i) for i in messages[:-1]]
             return messages
         except socket.timeout:
@@ -46,6 +47,7 @@ class Server(socket.socket):
                 data = current_client.receive()
                 if data:
                     for raw_message in data:
+                        print(raw_message)
                         message_type = raw_message[0]
                         message = raw_message[1]
                         if message_type == 'N':
@@ -65,6 +67,7 @@ class Server(socket.socket):
                             self.sendToAll('S', output)
 
                         elif message_type == 'I':
+                            print("Received I type.")
                             current_client.avatar = message
                             print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
                             self.sendToAll('I',message)

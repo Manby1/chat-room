@@ -285,9 +285,9 @@ class Client(socket.socket):
 
     def send(self, message_type, message, raw=False):
         if raw:
-            super().send(bytes("['{}',".format(message_type),'utf-8')+message+bytes("]",'utf-8'))
+            super().send(bytes("['{}',".format(message_type),'utf-8')+message+bytes("]\uFFFF",'utf-8'))
         else:
-            super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8'))
+            super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8')) 
 
     def receive(self):
         try:
@@ -396,10 +396,19 @@ while True:
             name = screen.getWidget('name', 'name').raw_text
             client.send('N', name)
             profile_image = pygame.image.load('profile.png')
-            image_string = pygame.image.tostring(profile_image, 'RGB')
-            #pygame.image.tostring simply cannot be sent. it sucks.
-            #game crashes. stops responding.
-            #client.send('I', str(image_string[2:-1]))
+            profile_image = pygame.transform.scale(profile_image, (32,32))
+            string_profile = []
+            at_line = []
+            for x in range(32):
+                for y in range(32):
+                    at_line.append([int(i*255) for i in profile_image.get_at((x,y)).normalize()])
+                string_profile.append(at_line)
+                at_line = []
+            test = bytes(json.dumps(('I', string_profile))+'\uFFFF','utf-8').decode().split('\uFFFF')[:-1]
+            print(test)
+            client.send('I', string_profile)
+            print("Sent {}!".format(len(string_profile)))
+
             screen.lobby(0)
 
     elif screen.current_screen == 'lobby':
