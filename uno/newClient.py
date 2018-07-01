@@ -82,7 +82,6 @@ class Text:
     def print(self):
         display.blit(self.text, self.text_rect)
 
-
 #GUI Buttons
 class Button:
     def __init__(self, pos, text, font_size, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0), width = None, height = None):
@@ -113,6 +112,27 @@ class Button:
         else:
             pygame.draw.rect(display, self.colour, self.rect)
         display.blit(self.text, self.text_rect)
+
+#GUI Box
+class Box:
+    def __init__(self, pos, width, height, border_size = 0, border_colour = (0, 0, 0), colour = (255, 200, 100)):
+        self.colour = colour
+        self.border_size = border_size
+        self.border_colour = border_colour
+        self.width = width
+        self.height = height
+
+        self.position(pos)
+    def position(self, pos):
+        self.center = pos
+        self.rect = (round(self.center[0] - self.width / 2), round(self.center[1] - self.height / 2), self.width, self.height)
+
+    def print(self):
+        if not self.border_size == 0:
+            pygame.draw.rect(display, self.border_colour, self.rect)
+            pygame.draw.rect(display, self.colour, (self.rect[0]+self.border_size, self.rect[1]+self.border_size, self.rect[2]-self.border_size*2, self.rect[3]-self.border_size*2))
+        else:
+            pygame.draw.rect(display, self.colour, self.rect)
 
 #GUI Entry Boxes
 class Entry:
@@ -171,6 +191,8 @@ class Screen:
         self.currentScreen = None
         self.active_widgets = None
         self.using = None
+        self.phase = 0
+        self.width, self.height = display.get_size()
 
         #title widgets
         title_play = Button((300, 600), 'Play!', 50, 20, (60, 60, 255), colour=(80, 80, 255), font_colour=(220, 220, 255), width = 240, height = 150)
@@ -200,18 +222,32 @@ class Screen:
         #lobby widgets
         lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
+        lobby_confirm = Box((500, 400), 400, 200, 10, (200, 0, 0), (255, 0, 50))
+        lobby_usure = Text((500, 360), 'Are you sure?', 40)
+        lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=150, height=80)
+        lobby_no = Button((600, 440), 'No', 30, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=150, height=80)
 
         #universal
         back = Button((50, 30), 'Back', 20, colour=(50, 50, 50), font_colour=(255, 255, 255), border_size=5, border_colour=(0, 0, 0), width=80, height=40)
 
         #list of screens and their widgets
-        self.screens = {'title':{'play':title_play, 'quit':title_quit, 'splash':title_splash},
-                        'play':{'title':play_title, 'host':play_host, 'join':play_join, 'back':back},
-                        'join':{'title':join_title, 'ip_text':join_ip_text, 'port_text':join_port_text, 'ip':join_ip, 'port':join_port, 'join':join_join, 'back':back, 'auto':join_auto},
-                        'name':{'title':name_title, 'name_text':name_name_text, 'name':name_name, 'go':name_go, 'back':back},
-                        'lobby':{'leave':lobby_leave, 'title':lobby_title,}}
+        self.screens = {'title':{'play':(title_play, 0), 'quit':(title_quit, 0), 'splash':(title_splash, 0)},
+
+                        'play':{'title':(play_title, 0), 'host':(play_host, 0), 'join':(play_join, 0), 'back':(back, 0)},
+
+                        'join':{'title':(join_title, 0), 'ip_text':(join_ip_text, 0), 'port_text':(join_port_text, 0),
+                                'ip':(join_ip, 0), 'port':(join_port, 0), 'join':(join_join, 0), 'back':(back, 0),
+                                'auto':(join_auto, 0)},
+
+                        'name':{'title':(name_title, 0), 'name_text':(name_name_text, 0), 'name':(name_name, 0),
+                                'go':(name_go, 0), 'back':(back, 0)},
+
+                        'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'confirm':(lobby_confirm, 1),
+                                 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1), 'no':(lobby_no, 1)}}
+
 
     def switchScreen(self, screen):
+        self.phase = 0
         self.active_widgets = self.screens[screen]
         self.current_screen = screen
 
@@ -241,14 +277,17 @@ class Screen:
             display.fill((255, 140, 140))
             screen.print()
         elif phase == 1:
+            self.phase = 1
+            screen.print()
             print('Ok')
 
     def print(self):
         for widget in self.active_widgets.values():
-            widget.print()
+            if widget[1] == self.phase:
+                widget[0].print()
 
     def getWidget(self, screen, name):
-        return self.screens[screen][name]
+        return self.screens[screen][name][0]
 
 #Images
 class Image:
@@ -403,11 +442,16 @@ while True:
             screen.lobby(0)
 
     elif screen.current_screen == 'lobby':
-        if mouse.click(screen.getWidget('lobby', 'leave')):
-            client.close()
-            screen.lobby(1)
-            #screen.join()
-
+        if screen.phase == 0:
+            if mouse.click(screen.getWidget('lobby', 'leave')):
+                screen.lobby(1)
+                #screen.join()
+        elif screen.phase == 1:
+            if mouse.click(screen.getWidget('lobby', 'yes')):
+                client.close()
+                screen.join()
+            elif mouse.click(screen.getWidget('lobby', 'no')):
+                screen.lobby(0)
 
     if screen.using.__class__ == Entry:
         for event in events:
