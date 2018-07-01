@@ -450,7 +450,7 @@ class Client(socket.socket):
         except socket.timeout:
             return None
 
-    async def clientLoop():
+    async def clientLoop(self):
         while True:
             data = self.receive()
             if data:
@@ -516,6 +516,7 @@ clock = pygame.time.Clock()
 client = Client()
 
 async def mainLoop():
+    asyncio.ensure_future(client.clientLoop())
     while True:
         events = pygame.event.get()
         for event in events:
