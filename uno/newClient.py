@@ -267,8 +267,11 @@ class Client(socket.socket):
         self.name = None
         self.avatar = None
 
-    def send(self, message_type, message):
-        super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8'))
+    def send(self, message_type, message, raw=False):
+        if raw:
+            super().send(bytes("['{}',".format(message_type),'utf-8')+message+bytes("]",'utf-8'))
+        else:
+            super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8'))
 
     def receive(self):
         try:
@@ -378,7 +381,9 @@ while True:
             client.send('N', name)
             profile_image = pygame.image.load('profile.png')
             image_string = pygame.image.tostring(profile_image, 'RGB')
-            client.send('I', image_string.decode())
+            #pygame.image.tostring simply cannot be sent. it sucks.
+            #game crashes. stops responding.
+            client.send('I', str(image_string[2:-1]))
 
 
     if screen.using.__class__ == Entry:
