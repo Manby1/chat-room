@@ -66,6 +66,7 @@ class Server(socket.socket):
 
                         elif message_type == 'I':
                             current_client.avatar = message
+                            print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
                             self.sendToAll('I',message)
 
             except ConnectionResetError:
