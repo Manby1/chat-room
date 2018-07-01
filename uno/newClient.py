@@ -252,6 +252,9 @@ class Screen:
         join_auto = Button((300, 580), 'Auto-Connect', 35, colour=(255, 255, 255), font_colour=(0, 0, 0), border_size=10, border_colour=(0, 0, 0))
         join_ip_text = Text((500, 250), 'IP Address:', 30)
         join_port_text = Text((500, 380), 'Port:', 30)
+        join_fail = Box((500, 400), 500, 200, 10, (200, 0, 0), (255, 0, 50))
+        join_failmsg = Text((500, 360), "Could not Connect", 40)
+        join_ok = Button((500, 440), 'Ok', 30, colour=(180, 180, 180), font_colour=(50, 50, 50), border_size=5, border_colour=(100, 100, 100), width=150, height=80)
 
         #name widgets
         name_title = Text((500, 70), 'Connected!', 80, font_colour=(160, 160, 50))
@@ -279,7 +282,8 @@ class Screen:
 
                         'join':{'title':(join_title, 0), 'ip_text':(join_ip_text, 0), 'port_text':(join_port_text, 0),
                                 'ip':(join_ip, 0), 'port':(join_port, 0), 'join':(join_join, 0), 'back':(back, 0),
-                                'auto':(join_auto, 0)},
+                                'auto':(join_auto, 0), 'fail':(join_fail, 1), 'failmsg':(join_failmsg, 1),
+                                'ok':(join_ok, 1)},
 
                         'name':{'title':(name_title, 0), 'name_text':(name_name_text, 0), 'name':(name_name, 0),
                                 'go':(name_go, 0), 'back':(back, 0)},
@@ -305,17 +309,21 @@ class Screen:
         display.fill((100, 255, 255))
         screen.print()
 
-    def join(self):
-        self.switchScreen('join')
-        display.fill((255, 255, 0))
-        screen.print()
+    def join(self, phase = 0):
+        if phase == 0:
+            self.switchScreen('join')
+            display.fill((255, 255, 0))
+            screen.print()
+        elif phase == 1:
+            self.phase = 1
+            screen.print()
 
     def name(self):
         self.switchScreen('name')
         display.fill((255, 255, 0))
         screen.print()
 
-    def lobby(self, phase):
+    def lobby(self, phase = 0):
         if phase == 0:
             self.switchScreen('lobby')
             display.fill((255, 140, 140))
@@ -428,37 +436,47 @@ while True:
             screen.title()
 
     elif screen.current_screen == 'join':
+        if screen.phase == 0:
+            if mouse.clickScreen():
+                if screen.using.__class__ == Entry:
+                    screen.using.highlight(False)
+                screen.using = None
 
-        if mouse.clickScreen():
-            if screen.using.__class__ == Entry:
-                screen.using.highlight(False)
-            screen.using = None
+            if mouse.click(screen.getWidget('join', 'ip')):
+                screen.using = screen.getWidget('join', 'ip')
+                screen.getWidget('join', 'ip').highlight(True)
 
-        if mouse.click(screen.getWidget('join', 'ip')):
-            screen.using = screen.getWidget('join', 'ip')
-            screen.getWidget('join', 'ip').highlight(True)
+            elif mouse.click(screen.getWidget('join', 'port')):
+                screen.using = screen.getWidget('join', 'port')
+                screen.getWidget('join', 'port').highlight(True)
 
-        elif mouse.click(screen.getWidget('join', 'port')):
-            screen.using = screen.getWidget('join', 'port')
-            screen.getWidget('join', 'port').highlight(True)
+            if mouse.click(screen.getWidget('join', 'back')):
+                screen.play()
 
-        if mouse.click(screen.getWidget('join', 'back')):
-            screen.play()
+            elif mouse.click(screen.getWidget('join', 'join')):
+                IP_Address = screen.getWidget('join', 'ip').raw_text
+                Port = int(screen.getWidget('join', 'port').raw_text)
+                try:
+                    client.connect((IP_Address, Port))
+                    screen.name()
+                except ConnectionRefusedError:
+                    screen.join(1)
 
-        elif mouse.click(screen.getWidget('join', 'join')):
-            IP_Address = screen.getWidget('join', 'ip').raw_text
-            Port = int(screen.getWidget('join', 'port').raw_text)
-            client.connect((IP_Address, Port))
-            screen.name()
+            elif mouse.click(screen.getWidget('join', 'auto')):
+                #automatic connection
+                with open('server.txt') as f:
+                    data = f.read().split('\n')
+                    IP_Address = data[0]
+                    Port = int(data[1])
+                try:
+                    client.connect((IP_Address, Port))
+                    screen.name()
+                except ConnectionRefusedError:
+                    screen.join(1)
 
-        elif mouse.click(screen.getWidget('join', 'auto')):
-            #automatic connection
-            with open('server.txt') as f:
-                data = f.read().split('\n')
-                IP_Address = data[0]
-                Port = int(data[1])
-            client.connect((IP_Address, Port))
-            screen.name()
+        elif screen.phase == 1:
+            if mouse.click(screen.getWidget('join', 'ok')):
+                screen.join(0)
 
     elif screen.current_screen == 'name':
         if mouse.clickScreen():
