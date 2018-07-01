@@ -336,6 +336,11 @@ class Client(socket.socket):
         except socket.timeout:
             return None
 
+def compress(rgbarray):
+    r = [str(int(i*255)) for i in rgbarray[:-1]]
+    r = ''.join(r)
+    return r
+
 pygame_keys = {pygame.K_0:'0', pygame.K_1:'1', pygame.K_2:'2', pygame.K_3:'3', pygame.K_4:'4', pygame.K_5:'5',
               pygame.K_6:'6', pygame.K_7:'7', pygame.K_8:'8', pygame.K_9:'9', pygame.K_a:'a', pygame.K_b:'b',
               pygame.K_c:'c', pygame.K_d:'d', pygame.K_e:'e', pygame.K_f:'f', pygame.K_g:'g', pygame.K_h:'h',
@@ -440,13 +445,11 @@ while True:
             at_line = []
             for x in range(32):
                 for y in range(32):
-                    at_line.append([int(i*255) for i in profile_image.get_at((x,y)).normalize()])
+                    at_line.append(compress(profile_image.get_at((x,y)).normalize()))
                 string_profile.append(at_line)
                 at_line = []
-            test = bytes(json.dumps(('I', string_profile))+'\uFFFF','utf-8').decode().split('\uFFFF')[:-1]
-            print(test)
             client.send('I', string_profile)
-            print("Sent {}!".format(len(string_profile)))
+            print("Sent {}!".format(string_profile))
 
             screen.lobby(0)
 
