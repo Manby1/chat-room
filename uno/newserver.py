@@ -5,6 +5,7 @@ class Client:
         self.socket = socket
         self.address = address
         self.name = None
+        self.avatar = None
         self.ID = clientid
 
     def send(self, message_type, message):
@@ -62,6 +63,10 @@ class Server:
                             output = "{}: {}".format(current_client.name, message)
                             print(output)
                             self.sendToAll('S', output)
+
+                        elif message_type == 'I':
+                            current_client.avatar = message
+                            self.sendToAll('I',message)
 
             except ConnectionResetError:
                 print("Wah!! {} left! Did I do something wrong? (｡•́︿•̀｡)".format(current_client.name))
