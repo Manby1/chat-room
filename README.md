@@ -50,9 +50,11 @@ into actual lists! We would finally have:
 * L - Leave specification. Useful for standard exit procedures - can be otherwise inferred.
 * C - Card pick - sent as standard card codes (shown in image files).
 * E - Other event, e.g. Wild +4 Challenge - non chat, non card pick, call Uno, challenge Uno.
+* I - Avatar.
 
 #### Server -> Client:
 * J - Join event - broadcast a join event with user name, colour, and ID.
 * B - Broadcast - Redirection of a chat message - unsupported
 * C - Card play - broadcast the most recent move. Send with a player ID and a card play code.
 * E - Other event, e.g. Wild +4 Challenge. Similar to Client 'E', but ID is specified.
+* I - Avatar change.
