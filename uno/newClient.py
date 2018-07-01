@@ -357,6 +357,9 @@ while True:
         elif mouse.click(screen.getWidget('name', 'go')):
             name = screen.getWidget('name', 'name').raw_text
             client.send(bytes(json.dumps(('N', name))+'\uFFFF', 'utf-8'))
+            profile_image = pygame.image.load('profile.png')
+            image_string = decode(pygame.image.tostring(profile_image, 'RGB'))
+            client.send(bytes(json.dumps(('I', image_string)) + '\uFFFF', 'utf-8'))
 
 
     if screen.using.__class__ == Entry:
