@@ -64,30 +64,6 @@ class Client:
             print("Done!")
             return messages
 
-            '''OLD WAY OF DOING IT
-            if len(messages) > 1 and messages[-1] == '':
-                #WHOLE MESSAGE - MESSAGE + SPLITTER
-                if self.buffer == []:
-                    messages = [json.loads(i.replace("'",'"')) for i in messages[:-1]]
-                else:
-                    print(''.join(self.buffer)+''.join(messages[:-1])+'\n')
-                    messages = [json.loads(i.replace("'",'"')) for i in ''.join(self.buffer)+''.join(messages[:-1])]
-                    self.buffer = []
-            elif len(messages) > 1 and messages[-1] != '':
-                #WHOLE MESSAGE + PACKET
-                #The packet should be the first in its sequence, as it was sent after a whole message
-                if self.buffer == []:
-                    messages = [json.loads(i.replace("'",'"')) for i in messages[:-1]]
-                else:
-
-            elif len(messages) == 1:
-                #SINGLE PACKET
-                self.buffer.append(messages[0])
-                print(''.join(self.buffer)+'\n')
-            else:
-                print("ERROR: Received strange length message:",messages)
-            return messages
-        '''
         except socket.timeout:
             return None
 

@@ -382,22 +382,98 @@ class Client(socket.socket):
 
     def send(self, message_type, message, raw=False):
         if raw:
-            super().send(bytes("['{}',".format(message_type),'utf-8')+message+bytes("]\uFFFF",'utf-8'))
+            super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8'))
         else:
-            super().send(bytes(json.dumps((message_type, message))+'\uFFFF','utf-8')) 
+            super().send(bytes(json.dumps((message_type, ''.join(message.split('\uFFFF'))))+'\uFFFF','utf-8')) 
 
     def receive(self):
         try:
-            messages = self.recv(512).decode().split('\uFFFF')
-            messages = [json.loads(i) for i in messages[:-1]]
+            m = self.recv(2048)
+            print(m)
+            messages = m.decode().split('\uFFFF')
+            if '' in messages:
+                print("Found whole message sequence.")
+                #WHOLE MESSAGE(S)
+                if self.buffer == []:
+                    print("Buffer empty: Treating as new.")
+                    messages = [json.loads(i) for i in messages[:-1]]
+                else:
+                    print("Buffer full - appending to buffer {}.".format(self.buffer))
+                    bufferend = ''.join(self.buffer)+messages[0]
+                    messages = [json.loads(bufferend)]+[json.loads(i) for i in messages[1:-1]]
+                    self.buffer = []
+            else:
+                #CONTAINS PACKET
+                if len(messages) == 1:
+                    #ONLY A SINGLE PACKET
+                    print("Found single packet.")
+                    if self.buffer == []:
+                        print("Buffer empty. Appending...")
+                        self.buffer.append(messages[0])
+                        messages = None
+                    else:
+                        print("Buffer full. No splitter received - appending...")
+                        self.buffer.append(messages[0])
+                        messages = None
+                else:
+                    #WHOLE MESSAGES = LENGTH-1 + SINGLE PACKET AT END
+                    print("Found buried packet.")
+                    if self.buffer == []:
+                        print("Buffer empty.")
+                        self.buffer.append(messages[-1])
+                        messages = [json.loads(i) for i in messages[:-1]]
+                    else:
+                        print("Buffer full.")
+                        bufferend = ''.join(self.buffer) + messages[0]
+                        self.buffer = [messages[-1]]
+                        messages = [json.loads(bufferend)]+[json.loads(i) for i in messages[1:-1]]
+
+            print("Done!")
             return messages
+
         except socket.timeout:
             return None
+
+    async def clientLoop():
+        while True:
+            data = self.receive()
+            if data:
+                for raw_message in data:
+                    print("RAW: {}\n".format(raw_message))
+                    message_type = raw_message[0]
+                    message = raw_message[1]
+                    print(message_type)
+                    if message_type == 'N':
+                        if current_client.name == None:
+                            output = "{} has connected!".format(message)
+                            current_client.name = message
+                            print(output)
+                            self.sendToAll('S',output)
+                        else:
+                            output = "{} has changed their name to {}!".format(current_client.name, message)
+                            print(output)
+                            self.sendToAll('S',output)
+
+                    elif message_type == 'M':
+                        output = "{}: {}".format(current_client.name, message)
+                        print(output)
+                        self.sendToAll('S', output)
+
+                    elif message_type == 'I':
+                        print("Received I type.")
+                        current_client.avatar = message
+                        print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
+                        self.sendToAll('I',message,raw=True)
+                
+            await asyncio.sleep(0.1)
 
 def compress(rgbarray):
     r = [str(int(i*255)) for i in rgbarray[:-1]]
     r = ''.join(r)
     return r
+
+def decompress(rbgvalue):
+    return (int(rgbvalue[:3]),int(rgbvalue[3:6]),int(rgbvalue[6:]),255)
 
 pygame_keys = {pygame.K_0:'0', pygame.K_1:'1', pygame.K_2:'2', pygame.K_3:'3', pygame.K_4:'4', pygame.K_5:'5',
               pygame.K_6:'6', pygame.K_7:'7', pygame.K_8:'8', pygame.K_9:'9', pygame.K_a:'a', pygame.K_b:'b',
@@ -550,3 +626,4 @@ while True:
     clock.tick(100)
     pygame.display.update()
     mouse.update()
+    await asyncio.sleep(0.1)
