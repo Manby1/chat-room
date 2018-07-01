@@ -279,7 +279,6 @@ class Screen:
         elif phase == 1:
             self.phase = 1
             screen.print()
-            print('Ok')
 
     def print(self):
         for widget in self.active_widgets.values():
