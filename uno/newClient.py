@@ -218,7 +218,9 @@ class PlayerInfo:
         self.img.position((self.rect[0]+self.border_size+self.width/30, pos[1]))
 
     def setImage(self, image):
-        self.img = Image(image, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
+        profile_image = pygame.image.load('profile.png')
+        profile_image = pygame.transform.scale(profile_image, (32,32))
+        self.img = Image(profile_image, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
         self.print()
 
     def setText(self, text):
