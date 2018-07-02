@@ -187,7 +187,7 @@ class Entry:
 
 #Player Info Box
 class PlayerInfo:
-    def __init__(self, pos, border_colour = (0, 0, 0), colour = (255, 200, 100), font_colour = (0, 0, 0)):
+    def __init__(self, pos, border_colour = (255, 0, 0), colour = (255, 255, 0), font_colour = (0, 0, 0)):
         self.colour = colour
         self.border_size = 10
         self.border_colour = border_colour
@@ -206,7 +206,7 @@ class PlayerInfo:
         self.text_rect.center = (self.text_rect.center[0], pos[1])
         self.text_rect = self.text_rect.move(self.rect[0] + self.border_size + self.width / 14, 0)
 
-        self.setImage(pygame.image.load('profile.png'))
+        self.setImage(pygame.image.load('default.png'))
         self.position(pos)
 
     def position(self, pos):
@@ -218,7 +218,7 @@ class PlayerInfo:
         self.img.position((self.rect[0]+self.border_size+self.width/30, pos[1]))
 
     def setImage(self, image):
-        profile_image = pygame.image.load('profile.png')
+        profile_image = image
         profile_image = pygame.transform.scale(profile_image, (32,32))
         self.img = Image(profile_image, (self.rect[0]+self.border_size+self.width/30, self.center[1]))
         self.print()
@@ -281,7 +281,10 @@ class Screen:
         #lobby widgets
         lobby_title = Text((500, 70), 'In Lobby', 80, font_colour=(200, 60 ,60))
         lobby_leave = Button((55, 30), 'Leave', 20, colour=(255, 0, 50), font_colour=(255, 220, 220), border_size=5, border_colour=(200, 0, 0), width=90, height=40)
-        lobby_player1 = PlayerInfo((340, 320), (0, 0, 0), (0, 255, 0))
+        lobby_player1 = PlayerInfo((340, 300))
+        lobby_player2 = PlayerInfo((340, 380))
+        lobby_player3 = PlayerInfo((340, 460))
+        lobby_player4 = PlayerInfo((340, 540))
         lobby_confirm = Box((500, 400), 400, 200, 10, (200, 0, 0), (255, 0, 50))
         lobby_usure = Text((500, 360), 'Are you sure?', 40)
         lobby_yes = Button((400, 440), 'Yes', 30, colour=(255, 255, 255), font_colour=(0, 255, 0), border_size=5, border_colour=(0, 0, 0), width=150, height=80)
@@ -305,8 +308,9 @@ class Screen:
                                 'go':(name_go, 0), 'back':(back, 0)},
 
                         'lobby':{'leave':(lobby_leave , 0), 'title':(lobby_title, 0), 'player1':(lobby_player1, 0),
-                                 'confirm':(lobby_confirm, 1), 'usure':(lobby_usure, 1), 'yes':(lobby_yes, 1),
-                                 'no':(lobby_no, 1)}
+                                 'player2':(lobby_player2, 0), 'player3':(lobby_player3, 0),
+                                 'player4':(lobby_player4, 0), 'confirm':(lobby_confirm, 1), 'usure':(lobby_usure, 1),
+                                 'yes':(lobby_yes, 1), 'no':(lobby_no, 1)}
                         }
 
 
@@ -619,9 +623,7 @@ async def mainLoop():
 
         elif screen.current_screen == 'lobby':
             if screen.phase == 0:
-                screen.getWidget('lobby', 'player1').setText('no u')
                 if mouse.click(screen.getWidget('lobby', 'leave')):
-                    screen.getWidget('lobby', 'player1').setColour((0, 0, 255), (255, 255, 255), (255, 255, 0))
                     screen.lobby(1)
 
             elif screen.phase == 1:
@@ -629,7 +631,6 @@ async def mainLoop():
                     client.close()
                     screen.join()
                 elif mouse.click(screen.getWidget('lobby', 'no')):
-                    screen.getWidget('lobby', 'player1').setColour((255, 0, 0), (0, 255, 255), (0, 255, 0))
                     screen.lobby(0)
 
         if screen.using.__class__ == Entry:
