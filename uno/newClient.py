@@ -482,6 +482,7 @@ class Client(socket.socket):
                     elif message_type == 'I':
                         print("Received I type.")
                         current_client.avatar = message
+                        display.blit(message, (0, 0))
                         print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
                         self.sendToAll('I',message,raw=True)
                 
