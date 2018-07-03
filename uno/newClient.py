@@ -397,7 +397,7 @@ class Image:
 class Client(socket.socket):
     def __init__(self):
         super().__init__(socket.AF_INET, socket.SOCK_STREAM)
-        super().settimeout(0.1)
+        self.settimeout(0.1)
         self.ID = None
         self.name = None
         self.avatar = None
