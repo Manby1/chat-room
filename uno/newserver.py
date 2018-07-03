@@ -115,8 +115,7 @@ class Server(socket.socket):
                             print("Received I type.")
                             current_client.avatar = message
                             print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
-                            current_client.send('I', message, raw=True)
-                            #self.sendToAll('I',message,raw=True)
+                            self.sendToAll('I',message,raw=True)
 
             except ConnectionResetError:
                 print("Wah!! {} left! Did I do something wrong? (｡•́︿•̀｡)".format(current_client.name))
