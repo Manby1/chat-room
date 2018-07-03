@@ -484,19 +484,27 @@ class Client(socket.socket):
 
                     elif message_type == 'I':
                         print("Received I type.")
-                        current_client.avatar = message
-                        display.blit(message, (0, 0))
-                        print("Received an avatar from {}. Looks kinda sketch.".format(current_client.name))
-                        self.sendToAll('I',message,raw=True)
+
+                        #Creates empty image and sets decoded pixels accordingly
+                        image = pygame.Surface((32, 32))
+                        for x in range(32):
+                            for y in range(32):
+                                image.set_at((x, y), decompress(message[x][y]))
+                        self.avatar = image
+
+                        display.blit(image, (0, 0))
                 
             await asyncio.sleep(0.1)
 
 def compress(rgbarray):
-    r = [str(int(i*255)) for i in rgbarray[:-1]]
+    r = []
+    for i in rgbarray[:-1]:
+        real = str(int(i * 255))
+        r.append('0'*(3-len(real))+real)
     r = ''.join(r)
     return r
 
-def decompress(rbgvalue):
+def decompress(rgbvalue):
     return (int(rgbvalue[:3]),int(rgbvalue[3:6]),int(rgbvalue[6:]),255)
 
 pygame_keys = {pygame.K_0:'0', pygame.K_1:'1', pygame.K_2:'2', pygame.K_3:'3', pygame.K_4:'4', pygame.K_5:'5',
