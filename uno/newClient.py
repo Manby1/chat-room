@@ -393,12 +393,15 @@ class Image:
     def print(self):
         display.blit(self.image, self.image_rect)
 
+#Client
 class Client(socket.socket):
     def __init__(self):
         super().__init__(socket.AF_INET, socket.SOCK_STREAM)
+        super().settimeout(0.1)
         self.ID = None
         self.name = None
         self.avatar = None
+        self.buffer = []
 
     def send(self, message_type, message, raw=False):
         if raw:
@@ -521,7 +524,6 @@ clock = pygame.time.Clock()
 client = Client()
 
 async def mainLoop():
-    asyncio.ensure_future(client.clientLoop())
     while True:
         events = pygame.event.get()
         for event in events:
@@ -569,6 +571,7 @@ async def mainLoop():
                         IP_Address = screen.getWidget('join', 'ip').raw_text
                         Port = int(screen.getWidget('join', 'port').raw_text)
                         client.connect((IP_Address, Port))
+                        asyncio.ensure_future(client.clientLoop())
                         screen.name()
                     except Exception as e:
                         screen.join(1)
@@ -582,6 +585,7 @@ async def mainLoop():
                             IP_Address = data[0]
                             Port = int(data[1])
                             client.connect((IP_Address, Port))
+                            asyncio.ensure_future(client.clientLoop())
                             screen.name()
                     except Exception as e:
                         screen.join(1)
