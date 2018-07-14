@@ -3,6 +3,8 @@ __pycache__/
 server.txt
 .vscode
 profile.png
+Image.jpeg
+Layout.jpeg
 
 *.py[cod]
 *$py.class
